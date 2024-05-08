@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Globals:
+  Function:
+    Timeout: 40
+
+Resources:
+  VersioningTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: VersioningApp
+      AttributeDefinitions:
+        - AttributeName: appName
+          AttributeType: S
+      KeySchema:
+        - AttributeName: appName
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  VersioningFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: versioning.lambda_handler
+      Runtime: python3.8
+      Environment:
+        Variables:
+          IS_LOCAL: "false"
+          TABLE_NAME: !Ref VersioningTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VersioningTable
+      Events:
+        CreateApp:
+          Type: Api
+          Properties:
+            Path: /create-app
+            Method: post
+        GetVersion:
+          Type: Api
+          Properties:
+            Path: /{app_name}/version
+            Method: get
+        BumpVersion:
+          Type: Api
+          Properties:
+            Path: /{app_name}/bump
+            Method: post
+        SetVersion:
+          Type: Api
+          Properties:
+            Path: /{app_name}/set
+            Method: post
+
+Outputs:
+  WebEndpoint:
+    Description: "API Gateway endpoint URL for the Versioning Application"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

@@ -1,0 +1,43 @@
+name: Deploy SAM Application
+
+on:
+  push:
+    branches:
+      - "*" # This wildcard means that any branch will trigger the workflow
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8" # Ensure this matches the Python version used in your Lambda functions
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install awscli boto3
+          pip install aws-sam-cli
+          pip install pytest pytest-mock moto # Add testing libraries
+
+      - name: Run Unit Tests
+        run: |
+          python -m pytest ./tests
+
+      - name: Build SAM Application
+        run: sam build
+
+      - name: Deploy SAM Application
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versioning-app --capabilities CAPABILITY_IAM --region ${{ secrets.AWS_REGION }} --resolve-s3
+
+      - name: Verify deployment
+        run: echo "Deployed Successfully"
