@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8" # Ensure this matches the Python version used in your Lambda functions
+          python-version: "3.12" # Ensure this matches the Python version used in your Lambda functions
 
       - name: Install dependencies
         run: |
