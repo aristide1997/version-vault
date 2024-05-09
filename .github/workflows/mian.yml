@@ -22,7 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install awscli boto3
           pip install aws-sam-cli
-          pip install pytest pytest-mock moto # Add testing libraries
+          pip install pytest pytest-mock moto==3.0.7 # Add testing libraries
 
       - name: Run Unit Tests
         run: |
