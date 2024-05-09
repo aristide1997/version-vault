@@ -108,3 +108,34 @@ def test_lambda_handler_set_version(db_operations, api_event):
     response = lambda_handler(event=api_event["POST_SET"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 200, "Status code should be 200 for successful version set"
     assert json.loads(response['body'])['new_version'] == '2.0.0', "Version should be set to 2.0.0"
+
+def test_lambda_handler_create_app_missing_app_name(db_operations, api_event):
+    """Test the case where app name is missing during creation."""
+    # Change the app name to None
+    api_event["POST"]["queryStringParameters"]["app_name"] = None
+    response = lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 400, "Status code should be 400 for app name missing"
+    assert 'Missing app_name' in response['body'], "Response body should mention missing app name"
+
+def test_lambda_handler_get_version_non_existent_app(db_operations, api_event):
+    """Test getting the version of a non-existent app."""
+    api_event["GET"]["pathParameters"]["app_name"] = "RandomApp"  # Non-existent app name
+    response = lambda_handler(event=api_event["GET"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 404, "Status code should be 404 for non-existent app"
+    assert 'App not found' in response['body'], "Response body should confirm app not found"
+
+def test_lambda_handler_bump_version_invalid_version_type(db_operations, api_event):
+    """Test the case where invalid version type is supplied for version bump."""
+    lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)  # Create the app first
+    api_event["POST_BUMP"]["queryStringParameters"]["type"] = "invalid"  # Invalid version type
+    response = lambda_handler(event=api_event["POST_BUMP"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 400, "Status code should be 400 for invalid version type"
+    assert 'Invalid or missing version type' in response['body'], "Response body should mention invalid version type"
+    
+def test_lambda_handler_set_version_missing_new_version(db_operations, api_event):
+    """Test the case where new version is missing while setting a version."""
+    lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)  # Create the app first
+    api_event["POST_SET"]["queryStringParameters"]["new_version"] = None  # Missing new version
+    response = lambda_handler(event=api_event["POST_SET"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 400, "Status code should be 400 for missing new version"
+    assert 'Missing new_version' in response['body'], "Response body should mention missing new version"

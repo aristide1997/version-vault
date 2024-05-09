@@ -1,9 +1,9 @@
 name: Deploy SAM Application
 
 on:
-  push:
-    branches:
-      - "*" # This wildcard means that any branch will trigger the workflow
+  # push:
+  branches:
+    - "*" # This wildcard means that any branch will trigger the workflow
 
 jobs:
   deploy:
