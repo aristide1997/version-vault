@@ -3,7 +3,7 @@ name: Deploy SAM Application
 on:
   push:
     branches:
-      - "*" # This wildcard means that any branch will trigger the workflow
+      - "*/*" # matches every branch containing a single '/'
 
 jobs:
   deploy:
