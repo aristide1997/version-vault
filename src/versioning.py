@@ -8,22 +8,26 @@ import datetime
 from botocore.exceptions import ClientError
 import re
 import logging
+from error_messages import ErrorMessages  # Import the ErrorMessages class
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
 
 response_handler = ResponseHandler()
-jwt_manager = JWTManager("YourSecretKeyHere")  # Securely manage this key, perhaps using AWS Secrets Manager
+jwt_manager = JWTManager("YourSecretKeyHere")
 
 def lambda_handler(event, context, db_operations=None):
+    """
+    Handles incoming AWS Lambda requests, routes them based on the request type and resource.
+    """
     if db_operations is None:
         db_operations = DynamoDBOperations()
    
     try:
         if not test_dynamodb_connection(db_operations):
-            return response_handler.response('Failed to connect to DynamoDB', 500)
+            return response_handler.response(ErrorMessages.DYNAMODB_CONNECTION_FAIL, 500)
     except Exception as e:
-        return response_handler.response(f"Connection Test Failed: {str(e)}", 500)
+        return response_handler.response(ErrorMessages.format_error(ErrorMessages.CONNECTION_TEST_FAILED, str(e)), 500)
 
     try:
         operation = event['httpMethod']
@@ -33,19 +37,21 @@ def lambda_handler(event, context, db_operations=None):
 
         if path == "/create" and operation == "POST":
             app_name = params.get('app_name')
+            if not app_name:
+                return response_handler.response(ErrorMessages.MISSING_APP_NAME, 400)
             if not validate_app_name(app_name):
-                return response_handler.response('Invalid app_name', 400)
+                return response_handler.response(ErrorMessages.INVALID_APP_NAME, 400)
             secure = params.get('secure', 'false').lower() == 'true'
             return create_app(db_operations, app_name, secure)
 
         app_name = event['pathParameters'].get('app_name')
         if not validate_app_name(app_name):
-            return response_handler.response('Invalid app_name', 400)
+            return response_handler.response(ErrorMessages.INVALID_APP_NAME, 400)
         
         if check_if_secure_app(db_operations, app_name):
             token = headers.get('Authorization')
             if not token or not jwt_manager.verify_jwt(token, db_operations, app_name):
-                return response_handler.response('Unauthorized', 401)
+                return response_handler.response(ErrorMessages.UNAUTHORIZED, 401)
 
         # rest of routing logic
         if path == "/{app_name}/version" and operation == "GET":
@@ -56,13 +62,13 @@ def lambda_handler(event, context, db_operations=None):
         elif path == "/{app_name}/set" and operation == "POST":
             new_version = params.get('new_version')
             if not validate_version(new_version):
-                return response_handler.response('Invalid or missing version type', 400)
+                return response_handler.response(ErrorMessages.INVALID_VERSION_TYPE, 400)
             return set_version(db_operations, app_name, new_version)
         else:
-            return response_handler.response('Invalid request', 400)
+            return response_handler.response(ErrorMessages.INVALID_REQUEST, 400)
 
     except Exception as e:
-        return response_handler.response(str(e), 500)
+        return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)
 
 def validate_app_name(app_name):
     """ Validate the app name against a simple regex pattern. """
@@ -79,7 +85,9 @@ def validate_version(version):
     return True
 
 def test_dynamodb_connection(db_operations):
-    # This just attempts to fetch a predefined item to check the connection
+    """
+    Checks the connectivity to DynamoDB by attempting to fetch a predefined item.
+    """
     try:
         db_operations.get_item({'appName': 'TestConnectionApp'})
         return True
@@ -88,13 +96,16 @@ def test_dynamodb_connection(db_operations):
         return False
     
 def create_app(db_operations, app_name, secure=False):
-    if not app_name:
-        return response_handler.response('Missing app_name', 400)
+    """
+    Creates a new application entry in the database with an optional security token.
+    """
+    # if not app_name:
+    #     return response_handler.response(ErrorMessages.MISSING_APP_NAME, 400)
     
     try:
         result = db_operations.get_item({'appName': app_name})
         if 'Item' in result:
-            return response_handler.response('App already exists', 409)
+            return response_handler.response(ErrorMessages.APP_ALREADY_EXISTS, 409)
         
         app_data = {'appName': app_name, 'version': '0.1.0', 'secure': secure}
         print("secure: " + str(secure))
@@ -109,25 +120,31 @@ def create_app(db_operations, app_name, secure=False):
 
         return response_handler.response(response_data, 201)
     except Exception as e:
-        return response_handler.response(str(e), 500)
+        return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)
 
 def get_version(db_operations, app_name):
+    """
+    Retrieves the current version of the specified app from the database.
+    """
     try:
         result = db_operations.get_item({'appName': app_name})
         if 'Item' not in result:
-            return response_handler.response('App not found', 404)
+            return response_handler.response(ErrorMessages.APP_NOT_FOUND, 404)
         return response_handler.response({'version': result['Item']['version']}, 200)
     except Exception as e:
-        return response_handler.response(str(e), 500)
+        return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)
 
 def bump_version(db_operations, app_name, version_type):
+    """
+    Bumps the app version based on the specified type (major, minor, or patch).
+    """
     if not version_type or version_type not in ['major', 'minor', 'patch']:
-        return response_handler.response('Invalid or missing version type', 400)
+        return response_handler.response(ErrorMessages.INVALID_VERSION_TYPE, 400)
 
     try:
         result = db_operations.get_item({'appName': app_name})
         if 'Item' not in result:
-            return response_handler.response('App not found', 404)
+            return response_handler.response(ErrorMessages.APP_NOT_FOUND, 404)
         
         current_version = result['Item']['version']
         major, minor, patch = [int(part) for part in current_version.split('.')]
@@ -146,11 +163,14 @@ def bump_version(db_operations, app_name, version_type):
         )
         return response_handler.response({'new_version': new_version}, 200)
     except Exception as e:
-        return response_handler.response(str(e), 500)
+        return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)
 
 def set_version(db_operations, app_name, new_version):
+    """
+    Sets the version of an app to a specified new value.
+    """
     if not new_version:
-        return response_handler.response('Missing new_version', 400)
+        return response_handler.response(ErrorMessages.MISSING_NEW_VERSION, 400)
 
     try:
         db_operations.update_item(
@@ -160,9 +180,12 @@ def set_version(db_operations, app_name, new_version):
         )
         return response_handler.response({'new_version': new_version}, 200)
     except Exception as e:
-        return response_handler.response(str(e), 500)
+        return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)
 
 def check_if_secure_app(db_operations, app_name):
+    """
+    Checks if the specified app is configured for enhanced security.
+    """
     if not app_name:
         return False
     result = db_operations.get_item({'appName': app_name})
