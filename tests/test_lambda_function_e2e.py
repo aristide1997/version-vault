@@ -133,7 +133,7 @@ def test_lambda_handler_create_app_missing_app_name(db_operations, api_event):
     api_event["POST"]["queryStringParameters"]["app_name"] = None
     response = lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 400, "Status code should be 400 for app name missing"
-    assert 'Missing app_name' in response['body'], "Response body should mention missing app name"
+    assert 'Invalid app_name' in response['body'], "Response body should mention missing app name"
 
 def test_lambda_handler_get_version_non_existent_app(db_operations, api_event):
     """Test getting the version of a non-existent app."""
@@ -153,10 +153,10 @@ def test_lambda_handler_bump_version_invalid_version_type(db_operations, api_eve
 def test_lambda_handler_set_version_missing_new_version(db_operations, api_event):
     """Test the case where new version is missing while setting a version."""
     lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)  # Create the app first
-    api_event["POST_SET"]["queryStringParameters"]["new_version"] = None  # Missing new version
+    api_event["POST_SET"]["queryStringParameters"]["new_version"] = ""  # Missing new version
     response = lambda_handler(event=api_event["POST_SET"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 400, "Status code should be 400 for missing new version"
-    assert 'Missing new_version' in response['body'], "Response body should mention missing new version"
+    assert 'Invalid or missing version type' in response['body'], "Response body should mention missing new version"
 
 def test_lambda_handler_secure_create_app(db_operations, api_event):
     """Test creating a new app entry with secure 'true'. This should create a JWT as well."""
@@ -187,3 +187,46 @@ def test_lambda_handler_secure_bump_version(db_operations, api_event):
     response = lambda_handler(event=api_event["POST_BUMP_SECURE"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 200, "Status code should be 200 for successful version bump"
     assert json.loads(response['body'])['new_version'] == '0.2.0', "Version should be bumped to 0.2.0"
+
+def test_invalid_jwt(db_operations, api_event):
+    """Test accessing secure endpoints with an invalid JWT."""
+    # First create a secure app
+    response_create = lambda_handler(api_event["POST_SECURE"], context=None, db_operations=db_operations)
+    token = json.loads(response_create['body'])['token'] + "tampered"
+
+    # Use the tampered token to fetch version
+    api_event["GET_SECURE"]["headers"]["Authorization"] = token
+    response = lambda_handler(api_event["GET_SECURE"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 401, "Status code should be 401 for invalid JWT"
+    assert 'Unauthorized' in response['body'], "Response body should indicate unauthorized access"
+
+@pytest.mark.parametrize("invalid_name", ["test app", "test@app", "test*app", ""])
+def test_create_app_with_invalid_app_name(db_operations, api_event, invalid_name):
+    """Test app creation with invalid app names."""
+    api_event["POST"]["queryStringParameters"]["app_name"] = invalid_name
+    response = lambda_handler(api_event["POST"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 400, "Should return 400 for invalid app names"
+    assert 'Invalid app_name' in response['body'], "Response body should indicate invalid app name"
+
+def test_set_invalid_version_format(db_operations, api_event):
+    """Test setting a version with an invalid format."""
+    # First create the app
+    lambda_handler(api_event["POST"], context=None, db_operations=db_operations)
+    api_event["POST_SET"]["queryStringParameters"]["new_version"] = "1..0"
+    response = lambda_handler(api_event["POST_SET"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 400, "Status code should be 400 for invalid version format"
+    assert 'Invalid or missing version type' in response['body'], "Response body should indicate invalid version format"
+
+def test_unsupported_http_method(db_operations, api_event):
+    """Test lambda handler with an unsupported HTTP method."""
+    api_event["GET"]["httpMethod"] = "PUT"  # Unsupported method
+    response = lambda_handler(api_event["GET"], context=None, db_operations=db_operations)
+    assert response['statusCode'] == 400, "Status code should be 400 for unsupported HTTP method"
+    assert 'Invalid request' in response['body'], "Response body should indicate invalid request"
+
+# def test_get_item_exception(db_operations, api_event):
+#     """Test exception handling when fetching an item fails."""
+#     db_operations.get_item = MagicMock(side_effect=Exception("DB fetch failed"))
+#     response = lambda_handler(api_event["GET"], context=None, db_operations=db_operations)
+#     assert response['statusCode'] == 500, "Should return 500 when get_item fails"
+#     assert 'DB fetch failed' in response['body'], "Response body should contain the exception message"

@@ -33,10 +33,15 @@ def lambda_handler(event, context, db_operations=None):
 
         if path == "/create" and operation == "POST":
             app_name = params.get('app_name')
+            if not validate_app_name(app_name):
+                return response_handler.response('Invalid app_name', 400)
             secure = params.get('secure', 'false').lower() == 'true'
             return create_app(db_operations, app_name, secure)
 
         app_name = event['pathParameters'].get('app_name')
+        if not validate_app_name(app_name):
+            return response_handler.response('Invalid app_name', 400)
+        
         if check_if_secure_app(db_operations, app_name):
             token = headers.get('Authorization')
             if not token or not jwt_manager.verify_jwt(token, db_operations, app_name):
@@ -50,6 +55,8 @@ def lambda_handler(event, context, db_operations=None):
             return bump_version(db_operations, app_name, version_type)
         elif path == "/{app_name}/set" and operation == "POST":
             new_version = params.get('new_version')
+            if not validate_version(new_version):
+                return response_handler.response('Invalid or missing version type', 400)
             return set_version(db_operations, app_name, new_version)
         else:
             return response_handler.response('Invalid request', 400)
@@ -155,41 +162,8 @@ def set_version(db_operations, app_name, new_version):
     except Exception as e:
         return response_handler.response(str(e), 500)
 
-
-# def verify_jwt(token, db_operations, app_name):
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-#         # Check if the app_name in the token matches the app_name being accessed
-#         if payload.get('app_name') == app_name:
-#             # Fetch the stored token hash from the database
-#             result = db_operations.get_item({'appName': app_name})
-#             if 'tokenHash' in result['Item']:
-#                 token_hash = result['Item']['tokenHash']
-#                 # Validate the token hash
-#                 return hashlib.sha256(token.encode()).hexdigest() == token_hash
-#         return False
-#     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-#         return False
-
-# def create_jwt(app_name):
-#     payload = {
-#         'app_name': app_name,
-#         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=365)
-#     }
-#     return jwt.encode(payload, SECRET_KEY, algorithm='HS256')
-
 def check_if_secure_app(db_operations, app_name):
     if not app_name:
         return False
     result = db_operations.get_item({'appName': app_name})
     return result.get('Item', {}).get('secure', False)
-
-# def response(message, status_code):
-#     return {
-#         'statusCode': status_code,
-#         'headers': {
-#             'Content-Type': 'application/json',
-#             'Access-Control-Allow-Origin': '*'
-#         },
-#         'body': json.dumps(message) if isinstance(message, dict) else message
-#     }

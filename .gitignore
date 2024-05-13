@@ -8,3 +8,15 @@ __pycache__/
 
 # SAM CLI
 .aws-sam/
+
+# Coverage
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache

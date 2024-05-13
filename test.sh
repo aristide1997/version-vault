@@ -29,3 +29,5 @@ EOL
 
 # Start local API Gateway simulation
 sam local start-api --env-vars env.json
+
+coverage run --source=src -m pytest ./tests/test_lambda_function_e2e.py; coverage report
