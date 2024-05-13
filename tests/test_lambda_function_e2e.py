@@ -4,8 +4,13 @@ import pytest
 import boto3
 from moto import mock_dynamodb2
 from src.versioning import lambda_handler
-from src.db_operations import DynamoDBOperations
-from src.error_messages import ErrorMessages
+# from src.db_operations import DynamoDBOperations
+# from src.error_messages import ErrorMessages
+
+from src.services.database_service import DynamoDBOperations
+from src.services.jwt_service import JWTManager
+from src.utilities.response_handler import ResponseHandler
+from src.utilities.error_handling import ErrorMessages
 
 @pytest.fixture(scope="function")
 def aws_credentials():

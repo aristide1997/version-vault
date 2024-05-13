@@ -1,14 +1,19 @@
 import hashlib
-from db_operations import DynamoDBOperations
-from jwt_operations import JWTManager
-from response_handler import ResponseHandler
+# from db_operations import DynamoDBOperations
+# from jwt_operations import JWTManager
+# from response_handler import ResponseHandler
 import json
 import jwt
 import datetime
 from botocore.exceptions import ClientError
 import re
 import logging
-from error_messages import ErrorMessages  # Import the ErrorMessages class
+# from error_messages import ErrorMessages
+
+from services.database_service import DynamoDBOperations
+from services.jwt_service import JWTManager
+from utilities.response_handler import ResponseHandler
+from utilities.error_handling import ErrorMessages
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
