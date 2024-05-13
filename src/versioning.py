@@ -40,7 +40,7 @@ def lambda_handler(event, context, db_operations=None):
             if not token or not verify_jwt(token, db_operations, app_name):
                 return response('Unauthorized', 401)
 
-        # Existing routing logic
+        # rest of routing logic
         if path == "/{app_name}/version" and operation == "GET":
             return get_version(db_operations, app_name)
         elif path == "/{app_name}/bump" and operation == "POST":
