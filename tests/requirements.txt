@@ -1,0 +1,7 @@
+awscli
+boto3
+aws-sam-cli
+pytest
+pytest-mock
+moto==3.0.7
+PyJWT==2.3.0
