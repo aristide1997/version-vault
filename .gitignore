@@ -5,3 +5,6 @@ __pycache__/
 
 # Pytest-related
 .pytest_cache/
+
+# SAM CLI
+.aws-sam/
