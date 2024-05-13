@@ -8,8 +8,6 @@ from src.versioning import lambda_handler
 # from src.error_messages import ErrorMessages
 
 from src.services.database_service import DynamoDBOperations
-from src.services.jwt_service import JWTManager
-from src.utilities.response_handler import ResponseHandler
 from src.utilities.error_handling import ErrorMessages
 
 @pytest.fixture(scope="function")

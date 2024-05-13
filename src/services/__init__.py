@@ -2,5 +2,8 @@
 from .database_service import DynamoDBOperations
 from .jwt_service import JWTManager
 
-# Optionally, you can define an __all__ list which explicitly specifies what to expose
+# The __all__ list explicitly controls which symbols are exported when using 'from module import *'.
+# This prevents namespace pollution by only allowing specified functions, classes, or variables to be imported,
+# enhancing encapsulation and readability by clearly defining the module's public interface.
+
 __all__ = ['DynamoDBOperations', 'JWTManager']

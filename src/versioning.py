@@ -10,10 +10,8 @@ import re
 import logging
 # from error_messages import ErrorMessages
 
-from services.database_service import DynamoDBOperations
-from services.jwt_service import JWTManager
-from utilities.response_handler import ResponseHandler
-from utilities.error_handling import ErrorMessages
+from services import DynamoDBOperations, JWTManager
+from utilities import ResponseHandler, ErrorMessages
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
