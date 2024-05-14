@@ -26,7 +26,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -47,10 +46,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ needs.setup.outputs.python-version }}
 
       - name: Build SAM Application
         run: |
-          ls -la
           sam build
 
   deploy_application:
