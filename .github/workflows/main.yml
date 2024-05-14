@@ -21,6 +21,7 @@ jobs:
           python-version: "3.12"
 
       - name: Cache Python packages
+        id: cache-python-deps
         uses: actions/cache@v2
         with:
           path: ~/.cache/pip
@@ -33,12 +34,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r ./tests/requirements.txt
 
+      - name: Save Python version
+        run: echo "PYTHON_VERSION=3.12" >> $GITHUB_ENV
+
   run_tests:
     needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Restore Python packages cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ needs.setup.outputs['cache-python-deps'] }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Run Unit Tests
         run: |
@@ -51,6 +63,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Restore Python packages cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ needs.setup.outputs['cache-python-deps'] }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Build SAM Application
         run: |
           sam build
@@ -62,6 +82,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Restore Python packages cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ needs.setup.outputs['cache-python-deps'] }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Deploy SAM Application
         env:
@@ -79,6 +107,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Restore Python packages cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ needs.setup.outputs['cache-python-deps'] }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Test API via API Gateway Endpoint
         env:
