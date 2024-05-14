@@ -6,10 +6,10 @@ class JWTManager:
     def __init__(self, secret_key):
         self.secret_key = secret_key
 
-    def create_jwt(self, app_name):
+    def create_jwt(self, app_name, expiry_days):
         payload = {
             'app_name': app_name,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=365)
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=expiry_days)
         }
         return jwt.encode(payload, self.secret_key, algorithm='HS256')
 

@@ -106,7 +106,7 @@ def test_lambda_handler_create_app(db_operations, api_event):
     """Test the creation of a new app entry."""
     response = lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 201, "Status code should be 201 for successful creation"
-    # assert 'App created with version 0.1.0' in response['body'], "Response body should confirm creation"
+    assert json.loads(response['body'])['version'] == '0.1.0', "The version should be 0.1.0 in the response body"
 
 def test_lambda_handler_get_version(db_operations, api_event):
     """Test getting the version of an app after its creation."""
@@ -227,3 +227,17 @@ def test_unsupported_http_method(db_operations, api_event):
     response = lambda_handler(api_event["GET"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 400, "Status code should be 400 for unsupported HTTP method"
     assert ErrorMessages.INVALID_REQUEST in response['body'], "Response body should indicate invalid request"
+
+def test_create_app_with_custom_jwt_expiry(db_operations, api_event):
+    """Test the creation of a new app entry with a custom JWT expiry."""
+    # Set the custom expiry in the query string parameters
+    api_event["POST_SECURE"]["queryStringParameters"]["expiry_days"] = "180"
+    response = lambda_handler(event=api_event["POST_SECURE"], context=None, db_operations=db_operations)
+
+    assert response['statusCode'] == 201, "Status code should be 201 for successful creation"
+    app_name = json.loads(response['body'])['app_name']
+
+    # Retrieve the app from the database to check the token expiry
+    result = db_operations.get_item({'appName': app_name})
+    assert 'Item' in result, "The item should have been found in the table."
+    assert result['Item']['tokenExpiryDays'] == 180, "The token expiry should match the custom expiry"

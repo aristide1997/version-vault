@@ -45,7 +45,10 @@ def lambda_handler(event, context, db_operations=None):
             if not validate_app_name(app_name):
                 return response_handler.response(ErrorMessages.INVALID_APP_NAME, 400)
             secure = params.get('secure', 'false').lower() == 'true'
-            return create_app(db_operations, app_name, secure)
+            expiry_days = params.get('expiry_days', 365)  # Get the custom expiry days
+            if expiry_days:
+                expiry_days = int(expiry_days)  # Convert to integer if it exists
+            return create_app(db_operations, app_name, secure, expiry_days)
 
         app_name = event['pathParameters'].get('app_name')
         if not validate_app_name(app_name):
@@ -98,23 +101,20 @@ def test_dynamodb_connection(db_operations):
         print(f"Failed to connect to DynamoDB: {str(e)}")
         return False
     
-def create_app(db_operations, app_name, secure=False):
+def create_app(db_operations, app_name, secure=False, expiry_days=365):
     """
     Creates a new application entry in the database with an optional security token.
     """
-    # if not app_name:
-    #     return response_handler.response(ErrorMessages.MISSING_APP_NAME, 400)
-    
     try:
         result = db_operations.get_item({'appName': app_name})
         if 'Item' in result:
             return response_handler.response(ErrorMessages.APP_ALREADY_EXISTS, 409)
         
         app_data = {'appName': app_name, 'version': '0.1.0', 'secure': secure}
-        print("secure: " + str(secure))
         if secure:
-            token = jwt_manager.create_jwt(app_name)
+            token = jwt_manager.create_jwt(app_name, expiry_days)
             app_data['tokenHash'] = hashlib.sha256(token.encode()).hexdigest()  # Store a hash of the token
+            app_data['tokenExpiryDays'] = expiry_days  # Store the token expiry duration
         db_operations.put_item(app_data)
 
         response_data = {'app_name': app_name, 'version': '0.1.0'}
@@ -124,6 +124,7 @@ def create_app(db_operations, app_name, secure=False):
         return response_handler.response(response_data, 201)
     except Exception as e:
         return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)
+
 
 def get_version(db_operations, app_name):
     """

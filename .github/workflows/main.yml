@@ -51,7 +51,7 @@ jobs:
   deploy_application:
     needs: build_application
     runs-on: ubuntu-latest
-    environment: production
+    environment: ari-aws-dev
     steps:
       - name: Deploy SAM Application
         env:
@@ -59,7 +59,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versioning-app --capabilities CAPABILITY_IAM --region ${{ secrets.AWS_REGION }} --resolve-s3
+          aws s3 ls
+          # sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versioning-app --capabilities CAPABILITY_IAM --region ${{ secrets.AWS_REGION }} --resolve-s3
 
   verify_deployment:
     needs: deploy_application
