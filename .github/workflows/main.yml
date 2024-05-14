@@ -3,38 +3,22 @@ name: Deploy SAM Application
 on:
   push:
     branches:
-      - "*/*" # Optimized branch pattern if required
+      - "*/*" # matches every branch containing a single '/'
       - "*"
-
-env:
-  PYTHON_VERSION: "3.12" # Define Python version globally
 
 jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      cache-key: ${{ steps.cache-py.outputs.cache-key }}
+      python-version: "3.12"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Cache Python packages
-        id: cache-py
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r ./tests/requirements.txt
-          pip list  # This will print out all installed packages to the log
+          python-version: ${{ steps.setup.outputs.python-version }}
 
   run_tests:
     needs: setup
@@ -45,13 +29,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ needs.setup.outputs.python-version }}
+
+      - name: Install Python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./tests/requirements.txt
 
       - name: Run Unit Tests
-        run: python -m pytest ./tests/test_lambda_function_e2e.py
+        run: |
+          python -m pytest ./tests/test_lambda_function_e2e.py
 
   build_application:
-    needs: run_tests
+    needs: [run_tests, setup]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -59,12 +49,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ needs.setup.outputs.python-version }}
+
       - name: Build SAM Application
-        run: sam build
+        run: |
+          sam build
 
   deploy_application:
-    needs: build_application
+    needs: [build_application, setup]
     runs-on: ubuntu-latest
     environment: ari-aws-dev
     steps:
@@ -73,16 +65,21 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ needs.setup.outputs.python-version }}
       - name: Deploy SAM Application
-        run: sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "eu-west-2"
+        run: |
+          sam build
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
+          aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs" --output table
+
+          # sam deploy --no-execute-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
 
   verify_deployment:
-    needs: deploy_application
+    needs: [build_application, setup, deploy_application]
     runs-on: ubuntu-latest
     environment: ari-aws-dev
     steps:
@@ -91,111 +88,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: ${{ needs.setup.outputs.python-version }}
       - name: Test API via API Gateway Endpoint
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "eu-west-2"
         run: |
           API_URL=$(aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
           curl -X POST "${API_URL}/create?app_name=secure_app3&secure=true"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "eu-west-2"
-# name: Deploy SAM Application
-
-# on:
-#   push:
-#     branches:
-#       - "*/*" # matches every branch containing a single '/'
-#       - "*"
-
-# jobs:
-#   setup:
-#     runs-on: ubuntu-latest
-#     outputs:
-#       python-version: "3.12"
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-
-#       - name: Set up Python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: ${{ steps.setup.outputs.python-version }}
-
-#   run_tests:
-#     needs: setup
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-#       - name: Set up Python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: ${{ needs.setup.outputs.python-version }}
-
-#       - name: Install Python packages
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install -r ./tests/requirements.txt
-
-#       - name: Run Unit Tests
-#         run: |
-#           python -m pytest ./tests/test_lambda_function_e2e.py
-
-#   build_application:
-#     needs: [run_tests, setup]
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-#       - name: Set up Python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: ${{ needs.setup.outputs.python-version }}
-
-#       - name: Build SAM Application
-#         run: |
-#           sam build
-
-#   deploy_application:
-#     needs: [build_application, setup]
-#     runs-on: ubuntu-latest
-#     environment: ari-aws-dev
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-#       - name: Set up Python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: ${{ needs.setup.outputs.python-version }}
-#       - name: Deploy SAM Application
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_REGION: "eu-west-2"
-#         run: |
-#           sam build
-#           sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
-#           aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs" --output table
-
-#           # sam deploy --no-execute-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
-
-#   verify_deployment:
-#     needs: [build_application, setup, deploy_application]
-#     runs-on: ubuntu-latest
-#     environment: ari-aws-dev
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
-#       - name: Set up Python
-#         uses: actions/setup-python@v2
-#         with:
-#           python-version: ${{ needs.setup.outputs.python-version }}
-#       - name: Test API via API Gateway Endpoint
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_REGION: "eu-west-2"
-#         run: |
-#           API_URL=$(aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
-#           curl -X POST "${API_URL}/create?app_name=secure_app3&secure=true"
