@@ -95,6 +95,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "eu-west-2"
         run: |
-          # API_URL=$(aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
-          aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text
+          API_URL=$(aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
           curl -X POST "${API_URL}/create?app_name=secure_app3&secure=true"
