@@ -5,12 +5,12 @@ Globals:
     Timeout: 40
 
 Parameters:
-  DomainName:
-    Type: String
-    Description: Domain name
-  HostedZoneId:
-    Type: String
-    Description: Hosted zone ID
+  # DomainName:
+  #   Type: String
+  #   Description: Domain name
+  # HostedZoneId:
+  #   Type: String
+  #   Description: Hosted zone ID
   CFDistributionPriceClass:
     Type: String
     Default: PriceClass_All
