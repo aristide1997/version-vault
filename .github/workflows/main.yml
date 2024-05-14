@@ -41,7 +41,7 @@ jobs:
           python -m pytest ./tests/test_lambda_function_e2e.py
 
   build_application:
-    needs: run_tests
+    needs: [run_tests, setup]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
