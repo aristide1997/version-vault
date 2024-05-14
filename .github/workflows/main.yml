@@ -64,10 +64,10 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: "eu-west-2"
         run: |
           aws s3 ls
-          # sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versioning-app --capabilities CAPABILITY_IAM --region ${{ secrets.AWS_REGION }} --resolve-s3
+          # sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versioning-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
 
   verify_deployment:
     needs: deploy_application
