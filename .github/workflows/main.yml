@@ -47,8 +47,8 @@ jobs:
     steps:
       - name: Build SAM Application
         run: |
-          ls
-          sam build
+          ls -la
+          # sam build
 
   deploy_application:
     needs: build_application
