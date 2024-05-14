@@ -60,6 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: ari-aws-dev
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Deploy SAM Application
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
