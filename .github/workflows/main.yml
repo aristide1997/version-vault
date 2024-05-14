@@ -56,12 +56,16 @@ jobs:
           sam build
 
   deploy_application:
-    needs: build_application
+    needs: [build_application, setup]
     runs-on: ubuntu-latest
     environment: ari-aws-dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ needs.setup.outputs.python-version }}
       - name: Deploy SAM Application
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
