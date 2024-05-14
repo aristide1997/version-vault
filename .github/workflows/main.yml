@@ -68,9 +68,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: "eu-west-2"
         run: |
-          sam validate --template-file template.yaml
-          # sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
-          sam deploy --no-execute-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
+          sam validate --template-file template.yml
+          sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
+          # sam deploy --no-execute-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
 
   verify_deployment:
     needs: deploy_application
