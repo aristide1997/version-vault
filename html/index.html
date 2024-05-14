@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Version Management Service</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      header,
+      footer {
+        background: #333;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+      }
+      main {
+        padding: 20px;
+      }
+      section {
+        margin-bottom: 20px;
+      }
+      .hero {
+        background: #f4f4f4;
+        padding: 20px;
+        text-align: center;
+      }
+      .hero h1 {
+        color: #333;
+      }
+      .features,
+      .api-doc {
+        background: #e9e9e9;
+        padding: 15px;
+      }
+      .footer {
+        text-align: center;
+      }
+      pre {
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+      code {
+        color: #d14;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Version Management Service</h1>
+      <nav>
+        <a href="#features">Features</a> |
+        <a href="#documentation">API Documentation</a> |
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Version Management Simplified</h1>
+        <p>
+          Automate and secure your application versioning with our robust API.
+        </p>
+        <button onclick="window.location='#get-started';">Get Started</button>
+      </section>
+
+      <section id="features" class="features">
+        <h2>Features</h2>
+        <ul>
+          <li>
+            <strong>Secure Version Control:</strong> Manage your applications
+            securely with JWT-based access controls, ensuring that only
+            authorized users can alter versions.
+          </li>
+          <li>
+            <strong>Dynamic Versioning:</strong> Easily bump, set, and track
+            application versions with a simple API call.
+          </li>
+          <li>
+            <strong>Durable Storage:</strong> All version data is securely
+            stored and managed through DynamoDB for reliability and speed.
+          </li>
+        </ul>
+      </section>
+
+      <section id="documentation" class="api-doc">
+        <h2>API Documentation Preview</h2>
+        <p>
+          <strong>Creating an Application</strong> (Non-Secure and Secure
+          Examples):
+        </p>
+        <pre><code>curl -X POST https://yourapi.com/create -d 'app_name=example&secure=false'</code></pre>
+        <pre><code>curl -X POST https://yourapi.com/create -d 'app_name=secure_example&secure=true'</code></pre>
+        <p>
+          <strong>Retrieving the Current Version</strong> (Example for a
+          Non-Secure App):
+        </p>
+        <pre><code>curl https://yourapi.com/example/version</code></pre>
+        <p>
+          <strong>Bumping the Version</strong> (Secure and Non-Secure Examples):
+        </p>
+        <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
+        <pre><code>curl -X POST "https://yourapi.com/secure_example/bump?type=major" -H "Authorization: YOUR_JWT_TOKEN"</code></pre>
+        <p>
+          <strong>Explanation:</strong> Non-secure apps require no
+          authentication token. Secure apps, however, require a JWT token to be
+          passed in the header for authorization. This ensures enhanced security
+          by verifying that the requester has valid access rights to perform
+          version management tasks on secure applications.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Contact us at <a href="mailto:info@yourapi.com">info@yourapi.com</a>
+      </p>
+      <p>&copy; 2024 Version Management Service. All rights reserved.</p>
+    </footer>
+  </body>
+</html>
