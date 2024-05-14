@@ -67,7 +67,8 @@ jobs:
           AWS_REGION: "eu-west-2"
         run: |
           aws s3 ls
-          # sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versioning-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
+          # sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
+          sam deploy --no-execute-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
 
   verify_deployment:
     needs: deploy_application
