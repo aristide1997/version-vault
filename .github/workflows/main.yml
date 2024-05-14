@@ -46,7 +46,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Build SAM Application
-        run: sam build
+        run: |
+          ls
+          sam build
 
   deploy_application:
     needs: build_application
