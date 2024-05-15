@@ -63,12 +63,6 @@ Resources:
         IgnorePublicAcls: true
         RestrictPublicBuckets: true
 
-  OriginAccessIdentity:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: !Ref AWS::StackName
-
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -80,6 +74,12 @@ Resources:
             Resource: !Sub "arn:aws:s3:::${WebsiteBucket}/*"
             Principal:
               AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}"
+
+  OriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Ref AWS::StackName
 
   WebsiteDistribution:
     Type: AWS::CloudFront::Distribution
@@ -101,6 +101,7 @@ Resources:
             - GET
         ViewerCertificate:
           CloudFrontDefaultCertificate: true
+        DefaultRootObject: index.html
         Enabled: true
         Comment: !Sub ${AWS::StackName} S3-hosted website via CloudFront
 
