@@ -71,12 +71,13 @@ Resources:
     Properties:
       Bucket: !Ref WebsiteBucket
       PolicyDocument:
+        Version: "2012-10-17"
         Statement:
-          - Effect: Allow
+          - Effect: "Allow"
             Principal:
-              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOAI}
-            Action: s3:GetObject
-            Resource: !Sub arn:aws:s3:::${WebsiteBucket}/*
+              AWS: !GetAtt CloudFrontOAI.S3CanonicalUserId
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${WebsiteBucket}/*"
 
   WebsiteDistribution:
     Type: AWS::CloudFront::Distribution
