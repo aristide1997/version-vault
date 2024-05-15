@@ -9,6 +9,10 @@ Parameters:
     Type: String
     Description: "The domain name of website"
     Default: "versionvault.top"
+  HostedZoneId:
+    Type: String
+    Description: "The hosted zone id of domain"
+    Default: "Z07572782YB0HUAHR4GZ4"
 
 Resources:
   VersioningTable:
@@ -127,12 +131,12 @@ Outputs:
     Description: "API Gateway URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
 
-  # DnsRecord:
-  #   Type: AWS::Route53::RecordSet
-  #   Properties:
-  #     HostedZoneId: !Ref HostedZoneId
-  #     Name: !Ref DomainName
-  #     Type: A
-  #     AliasTarget:
-  #       DNSName: !GetAtt WebsiteDistribution.DomainName
-  #       HostedZoneId: "Z2FDTNDATAQYW2" # CloudFront
+  DnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt WebsiteDistribution.DomainName
+        HostedZoneId: "Z2FDTNDATAQYW2" # CloudFront
