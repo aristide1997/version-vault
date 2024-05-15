@@ -136,7 +136,7 @@ Outputs:
       Name: !Sub "${AWS::StackName}-S3BucketName"
   CloudFrontURL:
     Description: "CloudFront Distribution URL"
-    Value: !GetAtt WebsiteDistribution.DomainNames
+    Value: !GetAtt WebsiteDistribution.DomainName
   ApiGatewayUrl:
     Description: "API Gateway URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
