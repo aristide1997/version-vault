@@ -83,7 +83,7 @@ jobs:
       - name: Fetch S3 Bucket Name from CloudFormation
         id: fetch-bucket-name
         run: |
-          BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name MyStackName --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
+          BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name versionvault-app --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
           echo "::set-output name=bucket_name::$BUCKET_NAME"
 
       - name: Deploy to S3
