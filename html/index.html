@@ -4,155 +4,150 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Version Management Service</title>
+    <!-- Include Bootstrap CSS -->
     <link
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
     />
     <style>
-      body {
-        font-family: "Roboto", sans-serif;
-        margin: 0;
-        padding: 0;
-        color: #333;
-      }
-      header,
-      footer {
-        background: #6200ea;
-        color: white;
-        padding: 10px 20px;
-        text-align: center;
-      }
-      nav a {
-        color: white;
-        text-decoration: none;
-        padding: 8px 16px;
-      }
-      main {
-        padding: 20px;
-      }
       .hero {
-        background: #eee;
-        padding: 20px;
+        padding: 40px 0;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+      }
+      .api-doc pre,
+      .api-doc code {
+        background-color: #f8f9fa;
+      }
+      .footer {
+        padding: 20px 0;
+        background-color: #343a40;
+        color: #fff;
         text-align: center;
-      }
-      .hero h1 {
-        margin: 0;
-      }
-      .features,
-      .api-doc {
-        background: #fff;
-        padding: 15px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-      button {
-        background: #6200ea;
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        cursor: pointer;
-        font-size: 16px;
-        border-radius: 4px;
-      }
-      button:hover {
-        background: #5d00d6;
-      }
-      pre {
-        background: #f5f5f5;
-        border: 1px solid #ccc;
-        padding: 10px;
-      }
-      code {
-        color: #b71c1c;
-      }
-      footer p {
-        margin: 5px 0;
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>Version Management Service</h1>
-      <nav>
-        <a href="#features"
-          ><i class="material-icons">feature_flags</i> Features</a
-        >
-        |
-        <a href="#documentation"
-          ><i class="material-icons">description</i> API Documentation</a
-        >
-        |
-        <a href="#contact"
-          ><i class="material-icons">contact_mail</i> Contact</a
-        >
-      </nav>
+    <header class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">Version Management Service</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#features">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#documentation">API Documentation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#contact">Contact</a>
+          </li>
+        </ul>
+      </div>
     </header>
 
     <main>
-      <section class="hero">
+      <section class="hero text-center">
         <h1>Version Management Simplified</h1>
         <p>
           Automate and secure your application versioning with our robust API.
         </p>
-        <button onclick="window.location='#get-started';">Get Started</button>
+        <a href="#get-started" class="btn btn-primary">Get Started</a>
       </section>
 
-      <section id="features" class="features">
-        <h2>Features</h2>
-        <ul>
-          <li>
-            <strong>Secure Version Control:</strong> Manage your applications
-            securely with JWT-based access controls, ensuring that only
-            authorized users can alter versions.
-          </li>
-          <li>
-            <strong>Dynamic Versioning:</strong> Easily bump, set, and track
-            application versions with a simple API call.
-          </li>
-          <li>
-            <strong>Durable Storage:</strong> All version data is securely
-            stored and managed through DynamoDB for reliability and speed.
-          </li>
-        </ul>
-      </section>
+      <div class="container">
+        <section id="features" class="my-5">
+          <h2>Features</h2>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Secure Version Control</h5>
+                  <p class="card-text">
+                    Manage your applications securely with JWT-based access
+                    controls.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Dynamic Versioning</h5>
+                  <p class="card-text">
+                    Easily bump, set, and track application versions with a
+                    simple API call.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Durable Storage</h5>
+                  <p class="card-text">
+                    All version data is securely stored and managed through
+                    DynamoDB.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-      <section id="documentation" class="api-doc">
-        <h2>API Documentation Preview</h2>
-        <p>
-          <strong>Creating an Application</strong> (Non-Secure and Secure
-          Examples):
-        </p>
-        <pre><code>curl -X POST https://yourapi.com/create -d 'app_name=example&secure=false'</code></pre>
-        <pre><code>curl -X POST https://yourapi.com/create -d 'app_name=secure_example&secure=true'</code></pre>
-        <p>
-          <strong>Retrieving the Current Version</strong> (Example for a
-          Non-Secure App):
-        </p>
-        <pre><code>curl https://yourapi.com/example/version</code></pre>
-        <p>
-          <strong>Bumping the Version</strong> (Secure and Non-Secure Examples):
-        </p>
-        <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
-        <pre><code>curl -X POST "https://yourapi.com/secure_example/bump?type=major" -H "Authorization: YOUR_JWT_TOKEN"</code></pre>
-        <p>
-          <strong>Explanation:</strong> Non-secure apps require no
-          authentication token. Secure apps, however, require a JWT token to be
-          passed in the header for authorization. This ensures enhanced security
-          by verifying that the requester has valid access rights to perform
-          version management tasks on secure applications.
-        </p>
-      </section>
+        <section id="documentation" class="my-5 api-doc">
+          <h2>API Documentation Preview</h2>
+          <p>
+            <strong>Creating an Application</strong> (Non-Secure and Secure
+            Examples):
+          </p>
+          <pre><code>curl -X POST https://yourapi.com/create -d 'app_name=example&secure=false'</code></pre>
+          <pre><code>curl -X POST https://yourapi.com/create -d 'app_name=secure_example&secure=true'</code></pre>
+          <p>
+            <strong>Retrieving the Current Version</strong> (Example for a
+            Non-Secure App):
+          </p>
+          <pre><code>curl https://yourapi.com/example/version</code></pre>
+          <p>
+            <strong>Bumping the Version</strong> (Secure and Non-Secure
+            Examples):
+          </p>
+          <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
+          <pre><code>curl -X POST "https://yourapi.com/secure_example/bump?type=major" -H "Authorization: YOUR_JWT_TOKEN"</code></pre>
+          <p>
+            <strong>Explanation:</strong> Non-secure apps require no
+            authentication token. Secure apps, however, require a JWT token to
+            be passed in the header for authorization. This ensures enhanced
+            security by verifying that the requester has valid access rights to
+            perform version management tasks on secure applications.
+          </p>
+        </section>
+      </div>
     </main>
 
     <footer class="footer">
       <p>
-        Contact us at <a href="mailto:info@yourapi.com">info@yourapi.com</a>
+        Contact us at
+        <a href="mailto:info@yourapi.com" class="text-light"
+          >info@yourapi.com</a
+        >
       </p>
       <p>&copy; 2024 Version Management Service. All rights reserved.</p>
     </footer>
+
+    <!-- Include Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
