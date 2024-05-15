@@ -115,6 +115,16 @@ Resources:
         Enabled: true
         Comment: !Sub ${AWS::StackName} S3-hosted website via CloudFront
 
+  DnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref DomainName
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt WebsiteDistribution.DomainName
+        HostedZoneId: "Z2FDTNDATAQYW2" # CloudFront hosted zone ID
+
 Outputs:
   WebsiteURL:
     Description: "URL of the S3 bucket website"
@@ -126,17 +136,7 @@ Outputs:
       Name: !Sub "${AWS::StackName}-S3BucketName"
   CloudFrontURL:
     Description: "CloudFront Distribution URL"
-    Value: !GetAtt WebsiteDistribution.DomainName
+    Value: !GetAtt WebsiteDistribution.DomainNames
   ApiGatewayUrl:
     Description: "API Gateway URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
-
-  DnsRecord:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      HostedZoneId: !Ref HostedZoneId
-      Name: !Ref DomainName
-      Type: A
-      AliasTarget:
-        DNSName: !GetAtt WebsiteDistribution.DomainName
-        HostedZoneId: "Z2FDTNDATAQYW2" # CloudFront
