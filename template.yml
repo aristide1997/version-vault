@@ -56,28 +56,30 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: versionvault-dev-static-hosting-bucket
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
 
-  CloudFrontOAI:
+  OriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: !Sub "OAI for ${AWS::StackName}"
+        Comment: !Ref AWS::StackName
 
   WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: !Ref WebsiteBucket
       PolicyDocument:
-        Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal:
-              AWS: !GetAtt CloudFrontOAI.S3CanonicalUserId
             Action: "s3:GetObject"
             Resource: !Sub "arn:aws:s3:::${WebsiteBucket}/*"
+            Principal:
+              AWS: !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${OriginAccessIdentity}"
 
   WebsiteDistribution:
     Type: AWS::CloudFront::Distribution
@@ -87,7 +89,7 @@ Resources:
           - Id: WebsiteBucket
             DomainName: !GetAtt WebsiteBucket.RegionalDomainName
             S3OriginConfig:
-              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOAI}
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
         DefaultCacheBehavior:
           TargetOriginId: WebsiteBucket
           ViewerProtocolPolicy: redirect-to-https
