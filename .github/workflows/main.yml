@@ -59,6 +59,10 @@ jobs:
     needs: [build_application, setup]
     runs-on: ubuntu-latest
     environment: ari-aws-dev
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: "eu-west-2"
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -67,23 +71,20 @@ jobs:
         with:
           python-version: ${{ needs.setup.outputs.python-version }}
       - name: Deploy SAM Application
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "eu-west-2"
+        # env:
+        #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        #   AWS_REGION: "eu-west-2"
         run: |
           sam build
           sam deploy --no-confirm-changeset --no-fail-on-empty-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
           aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs" --output table
 
-          # sam deploy --no-execute-changeset --stack-name versionvault-app --capabilities CAPABILITY_IAM --region eu-west-2 --resolve-s3
       - name: Fetch S3 Bucket Name from CloudFormation
         id: fetch-bucket-name
         run: |
           BUCKET_NAME=$(aws cloudformation describe-stacks --stack-name MyStackName --query "Stacks[0].Outputs[?OutputKey=='S3BucketName'].OutputValue" --output text)
           echo "::set-output name=bucket_name::$BUCKET_NAME"
-        env:
-          AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Deploy to S3
         run: aws s3 sync ./html s3://${{ steps.fetch-bucket-name.outputs.bucket_name }} --delete
