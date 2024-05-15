@@ -96,7 +96,11 @@ Outputs:
   WebsiteURL:
     Description: "URL of the S3 bucket website"
     Value: !GetAtt WebsiteBucket.WebsiteURL
-
+  S3BucketName:
+    Description: "The name of the S3 bucket for static hosting"
+    Value: !Ref WebsiteBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-S3BucketName"
   CloudFrontURL:
     Description: "CloudFront Distribution URL"
     Value: !GetAtt WebsiteDistribution.DomainName
