@@ -86,12 +86,12 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - Id: WebsiteBucket
-            DomainName: !GetAtt WebsiteBucket.RegionalDomainName
+          - DomainName: !Sub "${WebsiteBucket}.s3.${AWS::Region}.amazonaws.com"
+            Id: bucketOrigin
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
         DefaultCacheBehavior:
-          TargetOriginId: WebsiteBucket
+          TargetOriginId: bucketOrigin
           ViewerProtocolPolicy: redirect-to-https
           ForwardedValues:
             QueryString: false
