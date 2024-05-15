@@ -52,7 +52,6 @@ Resources:
             Path: /{app_name}/set
             Method: post
 
-  # S3 Bucket for Hosting Static Website
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -61,25 +60,35 @@ Resources:
         IndexDocument: index.html
         ErrorDocument: error.html
 
-  # Origin Access Identity for CloudFront
   CloudFrontOAI:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Sub "OAI for ${AWS::StackName}"
 
-  # CloudFront Distribution to serve the S3 content
+  WebsiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CloudFrontOAI}
+            Action: s3:GetObject
+            Resource: !Sub arn:aws:s3:::${WebsiteBucket}/*
+
   WebsiteDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Origins:
-          - Id: myS3Origin
+          - Id: WebsiteBucket
             DomainName: !GetAtt WebsiteBucket.RegionalDomainName
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${CloudFrontOAI}
         DefaultCacheBehavior:
-          TargetOriginId: myS3Origin
+          TargetOriginId: WebsiteBucket
           ViewerProtocolPolicy: redirect-to-https
           ForwardedValues:
             QueryString: false
