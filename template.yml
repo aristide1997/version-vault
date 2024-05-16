@@ -143,11 +143,12 @@ Resources:
           Compress: true
           AllowedMethods:
             - HEAD
-            - GET
-            - POST
-            - PUT
             - DELETE
+            - POST
+            - GET
             - OPTIONS
+            - PUT
+            - PATCH
           CachedMethods:
             - GET
             - HEAD
