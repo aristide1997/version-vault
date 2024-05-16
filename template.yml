@@ -142,19 +142,19 @@ Resources:
             QueryString: false
           Compress: true
           AllowedMethods:
-            #   - HEAD
-            #   - DELETE
-            #   - POST
-            #   - GET
-            #   - OPTIONS
-            #   - PUT
-            #   - PATCH
-            # CachedMethods:
+            - HEAD
+            - DELETE
+            - POST
+            - GET
+            - OPTIONS
+            - PUT
+            - PATCH
+          CachedMethods:
             - GET
             - HEAD
-          # DefaultTTL: 3600
-          # MaxTTL: 86400
-          # MinTTL: 0
+          DefaultTTL: 3600
+          MaxTTL: 86400
+          MinTTL: 0
         Aliases:
           - !Ref DomainName
           - !Sub www.${DomainName}
