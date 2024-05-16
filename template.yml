@@ -144,6 +144,16 @@ Resources:
           AllowedMethods:
             - HEAD
             - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+          DefaultTTL: 3600
+          MaxTTL: 86400
+          MinTTL: 0
         Aliases:
           - !Ref DomainName
           - !Sub www.${DomainName}
