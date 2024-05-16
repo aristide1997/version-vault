@@ -154,7 +154,7 @@ Outputs:
     Value: !GetAtt WebsiteDistribution.DomainName
   CloudFrontDistributionId:
     Description: "ID of the CloudFront Distribution"
-    Value: !Ref WebsiteDistribution.Id
+    Value: !GetAtt WebsiteDistribution.Id
   ApiGatewayUrl:
     Description: "API Gateway URL"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
