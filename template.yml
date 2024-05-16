@@ -133,6 +133,16 @@ Resources:
         DNSName: !GetAtt WebsiteDistribution.DomainName
         HostedZoneId: "Z2FDTNDATAQYW2" # CloudFront hosted zone ID
 
+  DnsRecordWWW:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub www.${DomainName}
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt WebsiteDistribution.DomainName
+        HostedZoneId: "Z2FDTNDATAQYW2" # CloudFront hosted zone ID
+
 Outputs:
   WebsiteURL:
     Description: "URL of the S3 bucket website"
