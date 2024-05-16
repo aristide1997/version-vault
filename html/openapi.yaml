@@ -1,0 +1,154 @@
+openapi: 3.0.1
+info:
+  title: Application Management API
+  version: "1.0.0"
+  description: API to manage application versions and configurations, including security features.
+
+servers:
+  - url: https://<api-id>.execute-api.<region>.amazonaws.com/{stage}
+    variables:
+      stage:
+        default: prod
+        description: Deployment stage of the API
+
+paths:
+  /create:
+    post:
+      summary: Creates a new application
+      operationId: createApp
+      parameters:
+        - name: app_name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: secure
+          in: query
+          schema:
+            type: boolean
+            default: false
+        - name: expiry_days
+          in: query
+          schema:
+            type: integer
+            default: 365
+      responses:
+        "201":
+          description: Application created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  app_name:
+                    type: string
+                  version:
+                    type: string
+                  token:
+                    type: string
+                    description: Optional JWT token if security is enabled
+        "400":
+          description: Invalid request parameters
+        "409":
+          description: Application already exists
+        "500":
+          description: Internal server error
+
+  /{app_name}/version:
+    get:
+      summary: Retrieves the current application version
+      operationId: getVersion
+      parameters:
+        - name: app_name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successfully retrieved version
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version:
+                    type: string
+        "404":
+          description: Application not found
+        "500":
+          description: Internal server error
+
+  /{app_name}/bump:
+    post:
+      summary: Bumps the application version
+      operationId: bumpVersion
+      parameters:
+        - name: app_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [major, minor, patch]
+      responses:
+        "200":
+          description: Version bumped successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_version:
+                    type: string
+        "400":
+          description: Invalid version type
+        "404":
+          description: Application not found
+        "500":
+          description: Internal server error
+
+  /{app_name}/set:
+    post:
+      summary: Sets the application version to a specified value
+      operationId: setVersion
+      parameters:
+        - name: app_name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: new_version
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: '^\d+\.\d+\.\d+$' # Ensures the version is in major.minor.patch format
+      responses:
+        "200":
+          description: Version set successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_version:
+                    type: string
+        "400":
+          description: Missing or invalid new version
+        "404":
+          description: Application not found
+        "500":
+          description: Internal server error
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
