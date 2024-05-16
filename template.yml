@@ -115,6 +115,7 @@ Resources:
             - GET
         Aliases:
           - !Ref DomainName
+          - !Sub www.${DomainName}
         ViewerCertificate:
           AcmCertificateArn: !Ref AcmCertificateArn
           SslSupportMethod: sni-only
