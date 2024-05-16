@@ -66,6 +66,20 @@ Resources:
             Path: /{app_name}/set
             Method: post
 
+  ApiDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !Ref DomainName
+      CertificateArn: !Ref AcmCertificateArn
+
+  ApiMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref ApiDomainName
+      RestApiId: !Ref ServerlessRestApi
+      Stage: Prod
+      BasePath: "(none)"
+
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
