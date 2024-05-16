@@ -38,7 +38,7 @@ def lambda_handler(event, context, db_operations=None):
         params = event.get('queryStringParameters', {})
         headers = event.get('headers', {})
 
-        if path == "/create" and operation == "POST":
+        if path == "/api/create" and operation == "POST":
             app_name = params.get('app_name')
             if not app_name:
                 return response_handler.response(ErrorMessages.MISSING_APP_NAME, 400)
