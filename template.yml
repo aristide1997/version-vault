@@ -13,6 +13,10 @@ Parameters:
     Type: String
     Description: "The hosted zone id of domain"
     Default: "Z07572782YB0HUAHR4GZ4"
+  AcmCertificateArn:
+    Type: String
+    Description: "The certificate arn for the domain name provided"
+    Default: "arn:aws:acm:us-east-1:211125347335:certificate/707440a5-8021-432e-b021-01f80a327609"
 
 Resources:
   VersioningTable:
@@ -109,8 +113,11 @@ Resources:
           AllowedMethods:
             - HEAD
             - GET
+        Aliases:
+          - !Ref DomainName
         ViewerCertificate:
-          CloudFrontDefaultCertificate: true
+          AcmCertificateArn: !Ref AcmCertificateArn
+          SslSupportMethod: sni-only
         DefaultRootObject: index.html
         Enabled: true
         Comment: !Sub ${AWS::StackName} S3-hosted website via CloudFront
