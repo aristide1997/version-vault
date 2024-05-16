@@ -89,6 +89,14 @@ jobs:
       - name: Deploy to S3
         run: aws s3 sync ./html s3://${{ steps.fetch-bucket-name.outputs.bucket_name }} --delete
         # The --delete flag removes files in S3 that are not present in the local directory
+      - name: Fetch CloudFront Distribution ID
+        id: fetch-distribution-id
+        run: |
+          DISTRIBUTION_ID=$(aws cloudformation describe-stacks --stack-name versionvault-app --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDistributionId'].OutputValue" --output text)
+          echo "::set-output name=distribution_id::$DISTRIBUTION_ID"
+      - name: Invalidate CloudFront Distribution
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ steps.fetch-distribution-id.outputs.distribution_id }} --paths "/*"
 
   verify_deployment:
     needs: [build_application, setup, deploy_application]
