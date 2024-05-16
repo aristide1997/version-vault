@@ -145,7 +145,7 @@ Resources:
             - HEAD
             - GET
         CacheBehaviors:
-          - PathPattern: "/create"
+          - PathPattern: "/api/*"
             TargetOriginId: ApiOrigin
             ViewerProtocolPolicy: https-only
             AllowedMethods:
