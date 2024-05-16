@@ -66,19 +66,19 @@ Resources:
             Path: /{app_name}/set
             Method: post
 
-  ApiDomainName:
-    Type: AWS::ApiGateway::DomainName
-    Properties:
-      DomainName: !Ref DomainName
-      CertificateArn: !Ref AcmCertificateArn
+  # ApiDomainName:
+  #   Type: AWS::ApiGateway::DomainName
+  #   Properties:
+  #     DomainName: !Ref DomainName
+  #     CertificateArn: !Ref AcmCertificateArn
 
-  ApiMapping:
-    Type: AWS::ApiGateway::BasePathMapping
-    Properties:
-      DomainName: !Ref ApiDomainName
-      RestApiId: !Ref ServerlessRestApi
-      Stage: Prod
-      BasePath: "(none)"
+  # ApiMapping:
+  #   Type: AWS::ApiGateway::BasePathMapping
+  #   Properties:
+  #     DomainName: !Ref ApiDomainName
+  #     RestApiId: !Ref ServerlessRestApi
+  #     Stage: Prod
+  #     BasePath: "(none)"
 
   WebsiteBucket:
     Type: AWS::S3::Bucket
@@ -118,6 +118,14 @@ Resources:
             Id: bucketOrigin
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
+          - DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+            Id: ApiOrigin
+            # OriginPath: !Sub "/${Env}"
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+
         DefaultCacheBehavior:
           TargetOriginId: bucketOrigin
           ViewerProtocolPolicy: redirect-to-https
