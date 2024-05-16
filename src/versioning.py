@@ -60,12 +60,12 @@ def lambda_handler(event, context, db_operations=None):
                 return response_handler.response(ErrorMessages.UNAUTHORIZED, 401)
 
         # rest of routing logic
-        if path == "/{app_name}/version" and operation == "GET":
+        if path == "/api/{app_name}/version" and operation == "GET":
             return get_version(db_operations, app_name)
-        elif path == "/{app_name}/bump" and operation == "POST":
+        elif path == "/api/{app_name}/bump" and operation == "POST":
             version_type = params.get('type')
             return bump_version(db_operations, app_name, version_type)
-        elif path == "/{app_name}/set" and operation == "POST":
+        elif path == "/api/{app_name}/set" and operation == "POST":
             new_version = params.get('new_version')
             if not validate_version(new_version):
                 return response_handler.response(ErrorMessages.INVALID_VERSION_TYPE, 400)

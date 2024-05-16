@@ -27,25 +27,25 @@ VersionVault utilizes AWS Lambda, DynamoDB, and API Gateway to offer a fully man
 
 #### Create Application
 
-- **POST** `/create` - Creates a new application entry in VersionVault.
+- **POST** `/api/create` - Creates a new application entry in VersionVault.
 
 #### Get Current Version
 
-- **GET** `/{app_name}/version` - Retrieves the current version of the specified app.
+- **GET** `/api/{app_name}/version` - Retrieves the current version of the specified app.
 
 #### Bump Version
 
-- **POST** `/{app_name}/bump` - Bumps the specified type of version (patch, minor, major) for an app.
+- **POST** `/api/{app_name}/bump` - Bumps the specified type of version (patch, minor, major) for an app.
 
 #### Set Version
 
-- **POST** `/{app_name}/set` - Sets a specific version for an app.
+- **POST** `/api/{app_name}/set` - Sets a specific version for an app.
 
 ### Examples
 
 # Creating a secure application named "myApp"
 
-curl -X POST "http://<your-api-endpoint>/create?app_name=myApp&secure=true"
+curl -X POST "http://<your-api-endpoint>/api/create?app_name=myApp&secure=true"
 
 # Response will look like this with a token
 
