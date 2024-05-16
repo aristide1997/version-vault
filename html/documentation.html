@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Full API Documentation - Version Management Service</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding: 20px;
+      }
+      pre,
+      code {
+        background-color: #f8f9fa;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Complete API Documentation</h1>
+    <p>
+      Detailed information about all the functionalities of our Version
+      Management API.
+    </p>
+
+    <!-- Creating an Application -->
+    <section>
+      <h2>Creating an Application</h2>
+      <p>
+        Create a new application entry. Optionally set the application to
+        require secure access.
+      </p>
+      <h4>HTTP Request</h4>
+      <pre><code>POST /create</code></pre>
+      <h4>Parameters</h4>
+      <ul>
+        <li>
+          <strong>app_name</strong> (required): The name of the application.
+        </li>
+        <li>
+          <strong>secure</strong> (optional): If true, requires JWT
+          authentication for version management operations.
+        </li>
+      </ul>
+      <h4>Example Request</h4>
+      <pre><code>curl -X POST "https://yourapi.com/create?app_name=newApp&secure=true"</code></pre>
+      <h4>Response</h4>
+      <pre><code>{"app_name": "newApp", "version": "0.1.0", "secure": true}</code></pre>
+    </section>
+
+    <!-- Retrieving the Current Version -->
+    <section>
+      <h2>Retrieving the Current Version</h2>
+      <p>Retrieve the current version of a specified application.</p>
+      <h4>HTTP Request</h4>
+      <pre><code>GET /{app_name}/version</code></pre>
+      <h4>Example Request</h4>
+      <pre><code>curl https://yourapi.com/newApp/version</code></pre>
+      <h4>Response</h4>
+      <pre><code>{"version": "1.0.0"}</code></pre>
+    </section>
+
+    <!-- Version Management: Bump and Set -->
+    <section>
+      <h2>Version Management</h2>
+      <p>
+        Manage the application's version through bumping or setting directly.
+      </p>
+      <h4>Bumping the Version</h4>
+      <pre><code>POST /{app_name}/bump</code></pre>
+      <p>
+        Parameters: <strong>type</strong> (required): Can be 'major', 'minor',
+        or 'patch'.
+      </p>
+      <pre><code>curl -X POST "https://yourapi.com/newApp/bump?type=minor"</code></pre>
+      <pre><code>{"new_version": "1.1.0"}</code></pre>
+
+      <h4>Setting the Version Directly</h4>
+      <pre><code>POST /{app_name}/set</code></pre>
+      <p>
+        Parameters: <strong>new_version</strong> (required): The new version to
+        set, formatted as 'major.minor.patch'.
+      </p>
+      <pre><code>curl -X POST "https://yourapi.com/newApp/set?new_version=2.0.0"</code></pre>
+      <pre><code>{"new_version": "2.0.0"}</code></pre>
+    </section>
+
+    <p>
+      Note: Secure applications require a valid JWT for version bumping and
+      setting operations.
+    </p>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>
