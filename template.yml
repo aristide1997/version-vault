@@ -149,7 +149,13 @@ Resources:
             TargetOriginId: ApiOrigin
             ViewerProtocolPolicy: https-only
             AllowedMethods:
+              - HEAD
+              - DELETE
               - POST
+              - GET
+              - OPTIONS
+              - PUT
+              - PATCH
             ForwardedValues:
               QueryString: true
               Headers:
