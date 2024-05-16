@@ -17,6 +17,14 @@ Parameters:
     Type: String
     Description: "The certificate arn for the domain name provided"
     Default: "arn:aws:acm:us-east-1:211125347335:certificate/707440a5-8021-432e-b021-01f80a327609"
+# Env:
+#   Type: String
+#   AllowedValues:
+#     - test
+#     - dev
+#     - prod
+#   Description: Environment in which the application will be deployed. Allowed values [dev, test, prod]
+#   Default: prod
 
 Resources:
   VersioningTable:
@@ -121,6 +129,7 @@ Resources:
           - DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com"
             Id: ApiOrigin
             # OriginPath: !Sub "/${Env}"
+            OriginPath: /Prod
             CustomOriginConfig:
               HTTPPort: 80
               HTTPSPort: 443
