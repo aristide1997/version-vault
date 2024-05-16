@@ -56,37 +56,23 @@ Resources:
         CreateApp:
           Type: Api
           Properties:
-            Path: /create
+            Path: /api/create
             Method: post
         GetVersion:
           Type: Api
           Properties:
-            Path: /{app_name}/version
+            Path: /api/{app_name}/version
             Method: get
         BumpVersion:
           Type: Api
           Properties:
-            Path: /{app_name}/bump
+            Path: /api/{app_name}/bump
             Method: post
         SetVersion:
           Type: Api
           Properties:
-            Path: /{app_name}/set
+            Path: /api/{app_name}/set
             Method: post
-
-  # ApiDomainName:
-  #   Type: AWS::ApiGateway::DomainName
-  #   Properties:
-  #     DomainName: !Ref DomainName
-  #     CertificateArn: !Ref AcmCertificateArn
-
-  # ApiMapping:
-  #   Type: AWS::ApiGateway::BasePathMapping
-  #   Properties:
-  #     DomainName: !Ref ApiDomainName
-  #     RestApiId: !Ref ServerlessRestApi
-  #     Stage: Prod
-  #     BasePath: "(none)"
 
   WebsiteBucket:
     Type: AWS::S3::Bucket
