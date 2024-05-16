@@ -47,7 +47,7 @@
             <a class="nav-link" href="#features">Features</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#documentation">API Documentation</a>
+            <a class="nav-link" href="documentation.html">API Documentation</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#contact">Contact</a>
@@ -107,145 +107,31 @@
 
         <section id="documentation" class="my-5 api-doc">
           <h2>API Documentation Preview</h2>
+          <p>
+            Explore the capabilities of our Version Management API through the
+            following key operations:
+          </p>
 
           <h4>Creating an Application</h4>
           <p>
-            Initiates a new application record. Can be configured as secure or
-            non-secure.
+            Register a new application, with optional security features for
+            enhanced protection.
           </p>
-          <ul>
-            <li>
-              <strong>URL:</strong> <code>https://yourapi.com/create</code>
-            </li>
-            <li><strong>Method:</strong> <code>POST</code></li>
-            <li>
-              <strong>URL Params:</strong>
-              <ul>
-                <li>
-                  <strong>app_name [required]</strong>: The name of the
-                  application.
-                </li>
-                <li>
-                  <strong>secure [optional]</strong>: Boolean. Default is false.
-                  If true, application requires JWT authentication.
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Success Response:</strong>
-              <ul>
-                <li><strong>Code:</strong> 201</li>
-                <li>
-                  <strong>Content:</strong>
-                  <code
-                    >{"app_name": "example", "version": "0.1.0", "secure":
-                    true/false}</code
-                  >
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Error Response:</strong>
-              <ul>
-                <li>
-                  <strong>Code:</strong> 400 <strong>Content:</strong> {"error":
-                  "Missing app_name parameter"}
-                </li>
-                <li>
-                  <strong>Code:</strong> 409 <strong>Content:</strong> {"error":
-                  "Application already exists"}
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Sample Call:</strong>
-              <pre><code>curl -X POST "https://yourapi.com/create?app_name=example&secure=true"</code></pre>
-            </li>
-          </ul>
+          <pre><code>curl -X POST "https://yourapi.com/create?app_name=example&secure=true"</code></pre>
 
           <h4>Retrieving the Current Version</h4>
-          <p>
-            Fetches the current version number of the specified application.
-          </p>
-          <ul>
-            <li>
-              <strong>URL:</strong>
-              <code>https://yourapi.com/{app_name}/version</code>
-            </li>
-            <li><strong>Method:</strong> <code>GET</code></li>
-            <li>
-              <strong>Success Response:</strong>
-              <ul>
-                <li><strong>Code:</strong> 200</li>
-                <li>
-                  <strong>Content:</strong> <code>{"version": "1.2.3"}</code>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Error Response:</strong>
-              <ul>
-                <li>
-                  <strong>Code:</strong> 404 <strong>Content:</strong> {"error":
-                  "Application not found"}
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Sample Call:</strong>
-              <pre><code>curl https://yourapi.com/example/version</code></pre>
-            </li>
-          </ul>
+          <p>Quickly fetch the current version of your application.</p>
+          <pre><code>curl https://yourapi.com/example/version</code></pre>
 
-          <h4>Bumping the Version</h4>
-          <p>
-            Increments the version of an application based on the specified
-            version type (major, minor, patch).
-          </p>
-          <ul>
-            <li>
-              <strong>URL:</strong>
-              <code>https://yourapi.com/{app_name}/bump</code>
-            </li>
-            <li><strong>Method:</strong> <code>POST</code></li>
-            <li>
-              <strong>URL Params:</strong>
-              <ul>
-                <li>
-                  <strong>type [required]</strong>: The type of version
-                  increment (major, minor, patch).
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Success Response:</strong>
-              <ul>
-                <li><strong>Code:</strong> 200</li>
-                <li>
-                  <strong>Content:</strong>
-                  <code>{"new_version": "1.3.0"}</code>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Error Response:</strong>
-              <ul>
-                <li>
-                  <strong>Code:</strong> 400 <strong>Content:</strong> {"error":
-                  "Invalid version type specified"}
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Sample Call:</strong>
-              <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
-            </li>
-          </ul>
+          <h4>Version Management</h4>
+          <p>Update or set the application's version using simple commands.</p>
+          <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
+          <pre><code>curl -X POST "https://yourapi.com/example/set?new_version=2.0.0"</code></pre>
 
           <p>
-            <strong>Note:</strong> Secure apps require a JWT token to be passed
-            in the header for authorization. Non-secure apps do not require
-            authentication.
+            Our API provides a straightforward approach to managing your
+            application versions, ensuring that you have full control over
+            versioning with minimal effort.
           </p>
         </section>
 
