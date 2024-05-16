@@ -118,7 +118,7 @@ Resources:
             Id: bucketOrigin
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
-          - DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+          - DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com"
             Id: ApiOrigin
             # OriginPath: !Sub "/${Env}"
             CustomOriginConfig:
