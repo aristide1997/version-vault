@@ -23,6 +23,7 @@ def lambda_handler(event, context, db_operations=None):
     """
     Handles incoming AWS Lambda requests, routes them based on the request type and resource.
     """
+    print("event:",event)
     if db_operations is None:
         db_operations = DynamoDBOperations()
    
