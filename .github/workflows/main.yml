@@ -117,3 +117,15 @@ jobs:
         run: |
           API_URL=$(aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
           curl -X POST "${API_URL}/api/create?app_name=secure_app3&secure=true"
+
+          curl -X POST "${API_URL}/api/create?app_name=non_secure_app&secure=false"
+          random_version=$(echo $((RANDOM%10)).$((RANDOM%10)).$((RANDOM%10)))
+          response=$(curl -s -X POST "https://versionvault.top/api/non_secure_app/set?new_version=$random_version")
+          echo "Response: $response"
+          response_version=$(echo $response | jq -r '.new_version')
+          if [ "$response_version" == "$random_version" ]; then
+            echo "Version set successfully to $random_version"
+          else
+            echo "Failed to set version to $random_version"
+            exit 1
+          fi

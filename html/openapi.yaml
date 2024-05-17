@@ -1,40 +1,35 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
-  title: Application Management API
+  title: Versioning API
   version: "1.0.0"
-  description: API to manage application versions and configurations, including security features.
-
 servers:
-  - url: https://<api-id>.execute-api.<region>.amazonaws.com/{stage}
-    variables:
-      stage:
-        default: prod
-        description: Deployment stage of the API
-
+  - url: "https://your-api-id.execute-api.region.amazonaws.com/Prod"
 paths:
   /api/create:
     post:
-      summary: Creates a new application
+      summary: "Create a new application record"
       operationId: createApp
-      parameters:
-        - name: app_name
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: secure
-          in: query
-          schema:
-            type: boolean
-            default: false
-        - name: expiry_days
-          in: query
-          schema:
-            type: integer
-            default: 365
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                app_name:
+                  type: string
+                  description: "The name of the application"
+                secure:
+                  type: boolean
+                  default: false
+                  description: "Whether the app requires secure token access"
+                expiry_days:
+                  type: integer
+                  default: 365
+                  description: "Number of days the token remains valid"
       responses:
         "201":
-          description: Application created successfully
+          description: "Application created successfully"
           content:
             application/json:
               schema:
@@ -46,17 +41,16 @@ paths:
                     type: string
                   token:
                     type: string
-                    description: Optional JWT token if security is enabled
+                    nullable: true
         "400":
-          description: Invalid request parameters
+          description: "Bad request if required fields are missing or invalid"
         "409":
-          description: Application already exists
+          description: "Conflict if the application already exists"
         "500":
-          description: Internal server error
-
+          description: "Internal server error"
   /api/{app_name}/version:
     get:
-      summary: Retrieves the current application version
+      summary: "Retrieve the current version of the application"
       operationId: getVersion
       parameters:
         - name: app_name
@@ -66,7 +60,7 @@ paths:
             type: string
       responses:
         "200":
-          description: Successfully retrieved version
+          description: "Version retrieved successfully"
           content:
             application/json:
               schema:
@@ -75,13 +69,12 @@ paths:
                   version:
                     type: string
         "404":
-          description: Application not found
+          description: "Application not found"
         "500":
-          description: Internal server error
-
+          description: "Internal server error"
   /api/{app_name}/bump:
     post:
-      summary: Bumps the application version
+      summary: "Bump the application's version"
       operationId: bumpVersion
       parameters:
         - name: app_name
@@ -89,15 +82,20 @@ paths:
           required: true
           schema:
             type: string
-        - name: type
-          in: query
-          required: true
-          schema:
-            type: string
-            enum: [major, minor, patch]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum: ["major", "minor", "patch"]
+                  description: "Type of version increment"
       responses:
         "200":
-          description: Version bumped successfully
+          description: "Version bumped successfully"
           content:
             application/json:
               schema:
@@ -106,15 +104,14 @@ paths:
                   new_version:
                     type: string
         "400":
-          description: Invalid version type
+          description: "Invalid request parameters"
         "404":
-          description: Application not found
+          description: "Application not found"
         "500":
-          description: Internal server error
-
+          description: "Internal server error"
   /api/{app_name}/set:
     post:
-      summary: Sets the application version to a specified value
+      summary: "Set the application's version directly"
       operationId: setVersion
       parameters:
         - name: app_name
@@ -122,15 +119,19 @@ paths:
           required: true
           schema:
             type: string
-        - name: new_version
-          in: query
-          required: true
-          schema:
-            type: string
-            pattern: '^\d+\.\d+\.\d+$' # Ensures the version is in major.minor.patch format
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_version:
+                  type: string
+                  description: "New version to set directly (must be major.minor.patch format)"
       responses:
         "200":
-          description: Version set successfully
+          description: "Version set successfully"
           content:
             application/json:
               schema:
@@ -139,16 +140,14 @@ paths:
                   new_version:
                     type: string
         "400":
-          description: Missing or invalid new version
-        "404":
-          description: Application not found
+          description: "Invalid request parameters or missing new version"
         "500":
-          description: Internal server error
-
+          description: "Internal server error"
 components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        message:
-          type: string
+  securitySchemes:
+    BearerAuth:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+security:
+  - BearerAuth: []
