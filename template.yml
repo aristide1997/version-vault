@@ -146,6 +146,7 @@ Resources:
               QueryString: true
               Headers:
                 - "Content-Type"
+                - "Authorization"
         Aliases:
           - !Ref DomainName
           - !Sub www.${DomainName}
