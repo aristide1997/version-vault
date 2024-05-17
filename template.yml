@@ -61,17 +61,17 @@ Resources:
         GetVersion:
           Type: Api
           Properties:
-            Path: /api/api/{app_name}/version
+            Path: /api/{app_name}/version
             Method: get
         BumpVersion:
           Type: Api
           Properties:
-            Path: /api/api/{app_name}/bump
+            Path: /api/{app_name}/bump
             Method: post
         SetVersion:
           Type: Api
           Properties:
-            Path: /api/api/{app_name}/set
+            Path: /api/{app_name}/set
             Method: post
 
   WebsiteBucket:
