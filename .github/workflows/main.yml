@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          python -m pytest ./tests/test_lambda_function_e2e.py
+          python -m pytest ./tests/lambda_e2e.py
 
   build_application:
     needs: [run_tests, setup]
@@ -118,7 +118,7 @@ jobs:
           API_URL=$(aws cloudformation describe-stacks --stack-name versionvault-app --region eu-west-2 --query "Stacks[0].Outputs[?OutputKey=='ApiGatewayUrl'].OutputValue" --output text)
           curl -X POST "${API_URL}/api/create?app_name=secure_app3&secure=true"
 
-          curl -X POST "${API_URL}/api/create?app_name=non_secure_app&secure=false"
+          curl -X POST "https://versionvault.top/api/create?app_name=non_secure_app&secure=false"
           random_version=$(echo $((RANDOM%10)).$((RANDOM%10)).$((RANDOM%10)))
           response=$(curl -s -X POST "https://versionvault.top/api/non_secure_app/set?new_version=$random_version")
           echo "Response: $response"

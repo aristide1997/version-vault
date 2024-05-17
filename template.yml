@@ -1,3 +1,10 @@
+############################################################################################################################################################################
+############################################################################################################################################################################
+# A SAM template that describes an Amazon CloudFront distribution configured to serve a static website from an S3 bucket and handle API requests via Amazon API Gateway.   #
+# Additionally, the template sets up a Route 53 DNS record to point a domain name to the CloudFront distribution, facilitating both website access and API interactions."  #
+############################################################################################################################################################################
+############################################################################################################################################################################
+
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Globals:
