@@ -4,6 +4,12 @@
 
 VersionVault is a cloud-based service designed to manage semantic versioning of your applications easily. It utilizes AWS Serverless architecture, providing a scalable, reliable, and secure platform for version management.
 
+"Cloud based application versioning and storage system"
+
+### Why VersionVault?
+
+!!!Integrate binary upload with release to github/gitlab. compare to Semantic Release
+
 ### Features
 
 - **Create Versioned Apps**: Start version tracking for new applications by creating them through the API.

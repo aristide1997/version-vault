@@ -2,6 +2,10 @@ import boto3
 import os
 
 class DynamoDBOperations:
+    """
+    Provides methods for interacting with DynamoDB, facilitating operations such as 
+    retrieving, adding, and updating items in a specified DynamoDB table. 
+    """
     def __init__(self, client=None):
         if client:
             self.client = client

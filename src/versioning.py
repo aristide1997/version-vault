@@ -12,6 +12,7 @@ import logging
 
 from services import DynamoDBOperations, JWTManager
 from utilities import ResponseHandler, ErrorMessages
+from models import Application
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
@@ -51,6 +52,7 @@ def lambda_handler(event, context, db_operations=None):
                 expiry_days = int(expiry_days)  # Convert to integer if it exists
             return create_app(db_operations, app_name, secure, expiry_days)
 
+
         app_name = event['pathParameters'].get('app_name')
         if not validate_app_name(app_name):
             return response_handler.response(ErrorMessages.INVALID_APP_NAME, 400)
@@ -60,19 +62,47 @@ def lambda_handler(event, context, db_operations=None):
             if not token or not jwt_manager.verify_jwt(token, db_operations, app_name):
                 return response_handler.response(ErrorMessages.UNAUTHORIZED, 401)
 
+        try:
+            app = Application(app_name, db_operations)
+        except ValueError as e:
+            return response_handler.response(str(e), 404)
+
         # rest of routing logic
         if path == "/api/{app_name}/version" and operation == "GET":
-            return get_version(db_operations, app_name)
+            return app.get_version()
         elif path == "/api/{app_name}/bump" and operation == "POST":
             version_type = params.get('type')
-            return bump_version(db_operations, app_name, version_type)
+            return app.bump_version(version_type)
         elif path == "/api/{app_name}/set" and operation == "POST":
             new_version = params.get('new_version')
             if not validate_version(new_version):
                 return response_handler.response(ErrorMessages.INVALID_VERSION_TYPE, 400)
-            return set_version(db_operations, app_name, new_version)
+            return app.set_version(new_version)
         else:
             return response_handler.response(ErrorMessages.INVALID_REQUEST, 400)
+
+    #     app_name = event['pathParameters'].get('app_name')
+    #     if not validate_app_name(app_name):
+    #         return response_handler.response(ErrorMessages.INVALID_APP_NAME, 400)
+        
+    #     if check_if_secure_app(db_operations, app_name):
+    #         token = headers.get('Authorization')
+    #         if not token or not jwt_manager.verify_jwt(token, db_operations, app_name):
+    #             return response_handler.response(ErrorMessages.UNAUTHORIZED, 401)
+
+    #     # rest of routing logic
+    #     if path == "/api/{app_name}/version" and operation == "GET":
+    #         return get_version(db_operations, app_name)
+    #     elif path == "/api/{app_name}/bump" and operation == "POST":
+    #         version_type = params.get('type')
+    #         return bump_version(db_operations, app_name, version_type)
+    #     elif path == "/api/{app_name}/set" and operation == "POST":
+    #         new_version = params.get('new_version')
+    #         if not validate_version(new_version):
+    #             return response_handler.response(ErrorMessages.INVALID_VERSION_TYPE, 400)
+    #         return set_version(db_operations, app_name, new_version)
+    #     else:
+    #         return response_handler.response(ErrorMessages.INVALID_REQUEST, 400)
 
     except Exception as e:
         return response_handler.response(ErrorMessages.format_error(ErrorMessages.INTERNAL_SERVER_ERROR, str(e)), 500)

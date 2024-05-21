@@ -4,8 +4,6 @@ import pytest
 import boto3
 from moto import mock_dynamodb2
 from src.versioning import lambda_handler
-# from src.db_operations import DynamoDBOperations
-# from src.error_messages import ErrorMessages
 
 from src.services.database_service import DynamoDBOperations
 from src.utilities.error_handling import ErrorMessages
@@ -222,6 +220,9 @@ def test_set_invalid_version_format(db_operations, api_event):
 
 def test_unsupported_http_method(db_operations, api_event):
     """Test lambda handler with an unsupported HTTP method."""
+    # First create the app
+    lambda_handler(event=api_event["POST"], context=None, db_operations=db_operations)
+
     api_event["GET"]["httpMethod"] = "PUT"  # Unsupported method
     response = lambda_handler(api_event["GET"], context=None, db_operations=db_operations)
     assert response['statusCode'] == 400, f"Status code should be 400 for unsupported HTTP method. Response: {response}"
