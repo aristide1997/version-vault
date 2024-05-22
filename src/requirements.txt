@@ -1,1 +1,2 @@
 PyJWT==2.3.0
+aws-lambda-powertools[parser, validation, tracer]==2.6.0
