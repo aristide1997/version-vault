@@ -60,7 +60,7 @@ Resources:
             Effect: Allow
             Action:
               - secretsmanager:GetSecretValue
-            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${JwtSecret}"
+            Resource: !Ref JwtSecret
       Events:
         CreateApp:
           Type: Api
