@@ -56,8 +56,11 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref VersioningTable
-        - VersioningFunctionSecretsPolicy:
-            SecretArn: !Ref JwtSecret
+        - Statement:
+            Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${JwtSecret}"
       Events:
         CreateApp:
           Type: Api
@@ -79,20 +82,6 @@ Resources:
           Properties:
             Path: /api/{app_name}/set
             Method: post
-
-  VersioningFunctionSecretsPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: !Sub "${AWS::StackName}-secrets-policy"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Action:
-              - secretsmanager:GetSecretValue
-            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${JwtSecret}"
-      Roles:
-        - !GetAtt VersioningFunction.Role
 
   WebsiteBucket:
     Type: AWS::S3::Bucket
