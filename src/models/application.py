@@ -6,7 +6,6 @@ class Application:
         self.app_name = app_name
         self.db_operations = db_operations or DynamoDBOperations()
         self.response_handler = ResponseHandler()
-        self.jwt_manager = JWTManager("YourSecretKeyHere")
         self.load_app()
 
     def load_app(self):

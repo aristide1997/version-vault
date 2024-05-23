@@ -1,6 +1,6 @@
 import hashlib
 import logging
-import re
+import re, os
 
 from models import Application
 from services import DynamoDBOperations, JWTManager
@@ -10,15 +10,19 @@ from utilities import ErrorMessages, ResponseHandler
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s:%(message)s')
 
 response_handler = ResponseHandler()
-jwt_manager = JWTManager("YourSecretKeyHere")
 
-def lambda_handler(event, context, db_operations=None):
+def lambda_handler(event, context, db_operations=None, jwt_manager=None):
     """
     Handles incoming AWS Lambda requests, routes them based on the request type and resource.
     """
-    print("event:",event)
+    print("event:", event)
+
+    # If db_operations is not provided (mocked from testing), build it here
     if db_operations is None:
         db_operations = DynamoDBOperations()
+
+    if jwt_manager is None:
+        jwt_manager = JWTManager(secret_name = os.environ['JWT_SECRET_NAME'])
    
     try:
         if not test_dynamodb_connection(db_operations):
@@ -42,8 +46,7 @@ def lambda_handler(event, context, db_operations=None):
             expiry_days = params.get('expiry_days', 365)  # Get the custom expiry days
             if expiry_days:
                 expiry_days = int(expiry_days)  # Convert to integer if it exists
-            return create_app(db_operations, app_name, secure, expiry_days)
-
+            return create_app(db_operations, app_name, jwt_manager, secure, expiry_days)
 
         app_name = event['pathParameters'].get('app_name')
         if not validate_app_name(app_name):
@@ -101,7 +104,7 @@ def test_dynamodb_connection(db_operations):
         print(f"Failed to connect to DynamoDB: {str(e)}")
         return False
     
-def create_app(db_operations, app_name, secure=False, expiry_days=365):
+def create_app(db_operations, app_name, jwt_manager, secure=False, expiry_days=365):
     """
     Creates a new application entry in the database with an optional security token.
     """

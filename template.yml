@@ -1,10 +1,3 @@
-############################################################################################################################################################################
-############################################################################################################################################################################
-# A SAM template that describes an Amazon CloudFront distribution configured to serve a static website from an S3 bucket and handle API requests via Amazon API Gateway.   #
-# Additionally, the template sets up a Route 53 DNS record to point a domain name to the CloudFront distribution, facilitating both website access and API interactions."  #
-############################################################################################################################################################################
-############################################################################################################################################################################
-
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Globals:
@@ -24,14 +17,6 @@ Parameters:
     Type: String
     Description: "The certificate arn for the domain name provided"
     Default: "arn:aws:acm:us-east-1:211125347335:certificate/707440a5-8021-432e-b021-01f80a327609"
-# Env:
-#   Type: String
-#   AllowedValues:
-#     - test
-#     - dev
-#     - prod
-#   Description: Environment in which the application will be deployed. Allowed values [dev, test, prod]
-#   Default: prod
 
 Resources:
   VersioningTable:
@@ -46,6 +31,17 @@ Resources:
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
+  JwtSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: jwtSecret
+      Description: "Secret key for JWT encryption"
+      GenerateSecretString:
+        SecretStringTemplate: "{}"
+        GenerateStringKey: "JWT_SECRET"
+        PasswordLength: 32
+        ExcludeCharacters: '"@/\\'
+
   VersioningFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -56,9 +52,12 @@ Resources:
         Variables:
           IS_LOCAL: "false"
           TABLE_NAME: !Ref VersioningTable
+          JWT_SECRET_NAME: !Ref JwtSecret
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref VersioningTable
+        - VersioningFunctionSecretsPolicy:
+            SecretArn: !Ref JwtSecret
       Events:
         CreateApp:
           Type: Api
@@ -80,6 +79,20 @@ Resources:
           Properties:
             Path: /api/{app_name}/set
             Method: post
+
+  VersioningFunctionSecretsPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: !Sub "${AWS::StackName}-secrets-policy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${JwtSecret}"
+      Roles:
+        - !GetAtt VersioningFunction.Role
 
   WebsiteBucket:
     Type: AWS::S3::Bucket
@@ -121,7 +134,6 @@ Resources:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
           - DomainName: !Sub "${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com"
             Id: ApiOrigin
-            # OriginPath: !Sub "/${Env}"
             OriginPath: /Prod
             CustomOriginConfig:
               HTTPPort: 80
