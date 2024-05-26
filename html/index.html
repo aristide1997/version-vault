@@ -4,180 +4,247 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VersionVault</title>
-    <!-- Include Bootstrap CSS -->
+    <!-- Importing Google Fonts -->
     <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      href="https://fonts.googleapis.com/css2?family=Recursive:wght@400&family=Roboto:wght@700&display=swap"
       rel="stylesheet"
     />
     <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: #fff;
+        color: #333;
+      }
+      header {
+        background-color: #222;
+        color: white;
+        padding: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      header nav a {
+        color: white;
+        margin-left: 1rem;
+        text-decoration: none;
+      }
       .hero {
-        padding: 40px 0;
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e9ecef;
-      }
-      .api-doc pre,
-      .api-doc code {
-        background-color: #f8f9fa;
-      }
-      .footer {
-        padding: 20px 0;
-        background-color: #343a40;
-        color: #fff;
+        background: linear-gradient(135deg, #333 0%, #111 100%);
+        color: white;
         text-align: center;
+        padding: 5rem 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .hero h2 {
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 37px;
+        line-height: 43px;
+        margin-bottom: 1rem;
+        color: #ffffff;
+      }
+      .hero p {
+        font-family: "Recursive", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 20px;
+        margin-bottom: 2rem;
+        color: #ffffff;
+      }
+      .hero button {
+        font-family: "Recursive", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 18px;
+        background-color: #ff6c75;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      .features {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        padding: 2rem;
+      }
+      .feature {
+        background-color: #ffffff;
+        border-radius: 13px;
+        padding: 2rem;
+        text-align: center;
+        flex: 1;
+        max-width: 300px;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.16);
+      }
+      .feature img {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1rem;
+        border-radius: 50%;
+        background-color: #23201f; /* Placeholder for image background */
+      }
+      .feature h3 {
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 24.5px;
+        line-height: 29px;
+        margin-bottom: 1rem;
+        color: #000000;
+      }
+      .feature p {
+        font-family: "Recursive", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        color: #666;
+        text-align: center;
+        line-height: 20px;
+      }
+      .api-doc {
+        text-align: center;
+        padding: 2rem;
+      }
+      .api-doc h2 {
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 25px;
+        margin-bottom: 1rem;
+      }
+      .api-doc p {
+        font-family: "Recursive", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        color: #666;
+        margin-bottom: 2rem;
+      }
+      .api-section {
+        text-align: left;
+        margin: 2rem auto;
+        max-width: 800px;
+      }
+      .api-section h3 {
+        font-family: "Roboto", sans-serif;
+        font-style: normal;
+        font-weight: 700;
+        font-size: 20px;
+        margin-top: 2rem;
+      }
+      .api-section p {
+        font-family: "Recursive", sans-serif;
+        font-style: normal;
+        font-weight: 400;
+        font-size: 15px;
+        color: #666;
+      }
+      .api-section .api-code {
+        background-color: #333;
+        color: white;
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+        font-family: monospace;
+        overflow-x: auto;
+      }
+      .api-section .api-code span {
+        color: #27ae60; /* Green color for POST */
       }
     </style>
   </head>
   <body>
-    <header class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">VersionVault</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#features">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="swagger.html">API Documentation</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#contact">Contact</a>
-          </li>
-        </ul>
-      </div>
+    <header>
+      <h1>VersionVault</h1>
+      <nav>
+        <a href="#">Features</a>
+        <a href="swagger.html">API Documentation</a>
+        <a href="#">Contact</a>
+      </nav>
     </header>
-
-    <main>
-      <section class="hero text-center">
-        <h1>Version Management Simplified</h1>
-        <p>
-          Automate and secure your application versioning with our robust API.
-        </p>
-        <a href="#get-started" class="btn btn-primary">Get Started</a>
-      </section>
-
-      <div class="container">
-        <section id="features" class="my-5">
-          <h2>Features</h2>
-          <div class="row">
-            <div class="col-md-4">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Secure Version Control</h5>
-                  <p class="card-text">
-                    Manage your applications securely with JWT-based access
-                    controls.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Dynamic Versioning</h5>
-                  <p class="card-text">
-                    Easily bump, set, and track application versions with a
-                    simple API call.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Durable Storage</h5>
-                  <p class="card-text">
-                    All version data is securely stored and managed through
-                    DynamoDB.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="documentation" class="my-5 api-doc">
-          <h2>API Documentation Preview</h2>
-          <p>
-            Explore the capabilities of our Version Management API through the
-            following key operations:
-          </p>
-
-          <h4>Creating an Application</h4>
-          <p>
-            Register a new application, with optional security features for
-            enhanced protection.
-          </p>
-          <pre><code>curl -X POST "https://yourapi.com/api/create?app_name=example&secure=true"</code></pre>
-
-          <h4>Retrieving the Current Version</h4>
-          <p>Quickly fetch the current version of your application.</p>
-          <pre><code>curl https://yourapi.com/example/version</code></pre>
-
-          <h4>Version Management</h4>
-          <p>Update or set the application's version using simple commands.</p>
-          <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
-          <pre><code>curl -X POST "https://yourapi.com/example/set?new_version=2.0.0"</code></pre>
-
-          <p>
-            Our API provides a straightforward approach to managing your
-            application versions, ensuring that you have full control over
-            versioning with minimal effort.
-          </p>
-        </section>
-
-        <!-- <section id="documentation" class="my-5 api-doc">
-          <h2>API Documentation Preview</h2>
-          <p>
-            <strong>Creating an Application</strong> (Non-Secure and Secure
-            Examples):
-          </p>
-          <pre><code>curl -X POST https://yourapi.com/api/create?app_name=example</code></pre>
-          <pre><code>curl -X POST https://yourapi.com/api/create?app_name=secure_example&secure=true</code></pre>
-          <p>
-            <strong>Retrieving the Current Version</strong> (Example for a
-            Non-Secure App):
-          </p>
-          <pre><code>curl https://yourapi.com/example/version</code></pre>
-          <p>
-            <strong>Bumping the Version</strong> (Secure and Non-Secure
-            Examples):
-          </p>
-          <pre><code>curl -X POST "https://yourapi.com/example/bump?type=minor"</code></pre>
-          <pre><code>curl -X POST "https://yourapi.com/secure_example/bump?type=major" -H "Authorization: YOUR_JWT_TOKEN"</code></pre>
-          <p>
-            <strong>Explanation:</strong> Non-secure apps require no
-            authentication token. Secure apps, however, require a JWT token to
-            be passed in the header for authorization. This ensures enhanced
-            security by verifying that the requester has valid access rights to
-            perform version management tasks on secure applications.
-          </p>
-        </section> -->
-      </div>
-    </main>
-
-    <footer class="footer">
+    <div class="hero">
+      <h2>Version Management Simplified.</h2>
       <p>
-        Contact us at
-        <a href="mailto:info@yourapi.com" class="text-light"
-          >info@yourapi.com</a
-        >
+        Automate and secure your application versioning with our robust API.
       </p>
-      <p>&copy; 2024 Version Management Service. All rights reserved.</p>
-    </footer>
-
-    <!-- Include Bootstrap JS and its dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <button>Get started</button>
+    </div>
+    <div class="features">
+      <div class="feature">
+        <img src="#" alt="Secure Version Control" />
+        <h3>Secure Version Control</h3>
+        <p>Manage your applications securely with JWT-based access controls.</p>
+      </div>
+      <div class="feature">
+        <img src="#" alt="Dynamic Versioning" />
+        <h3>Dynamic Versioning</h3>
+        <p>
+          Easily bump, set, and track application versions with a simple API
+          call.
+        </p>
+      </div>
+      <div class="feature">
+        <img src="#" alt="Durable Storage" />
+        <h3>Durable Storage</h3>
+        <p>All version data is securely stored and managed through DynamoDB.</p>
+      </div>
+    </div>
+    <div class="api-doc">
+      <h2>API Documentation Preview</h2>
+      <p>
+        Explore the capabilities of our Version Management API through the
+        following key operations:
+      </p>
+    </div>
+    <div class="api-section">
+      <h3>Creating an Application</h3>
+      <p>
+        Register a new application, with optional security features for enhanced
+        protection.
+      </p>
+      <div class="api-code">
+        <code
+          ><span>curl -X POST</span>
+          "https://yourapi.com/api/create?app_name=example&secure=true"</code
+        >
+      </div>
+      <h3>Retrieving the Current Version</h3>
+      <p>Quickly fetch the current version of your application.</p>
+      <div class="api-code">
+        <code><span>curl</span> https://yourapi.com/example/version</code>
+      </div>
+      <h3>Version Management</h3>
+      <p>Update or set the application's version using simple commands.</p>
+      <div class="api-code">
+        <code
+          ><span>curl -X POST</span>
+          "https://yourapi.com/example/bump?type=minor"</code
+        >
+      </div>
+      <div class="api-code">
+        <code
+          ><span>curl -X POST</span>
+          "https://yourapi.com/example/set?new_version=2.0.0"</code
+        >
+      </div>
+      <p>
+        Our API provides a straightforward approach to managing your application
+        versions, ensuring that you have full control over versioning with
+        minimal effort.
+      </p>
+    </div>
   </body>
 </html>
