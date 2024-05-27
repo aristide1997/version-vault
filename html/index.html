@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VersionVault</title>
-    <!-- Importing Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Recursive:wght@400&family=Roboto:wght@700&display=swap"
       rel="stylesheet"
@@ -36,55 +35,36 @@
       .hero {
         background: linear-gradient(135deg, #333 0%, #111 100%);
         color: white;
-        /* text-align: center; */
-        padding: 5rem 1rem;
-        /* display: flex; */
-        /* flex-direction: column; */
-        /* align-items: center;
-        justify-content: center; */
+        padding: 2.5rem 1rem;
       }
-      /* .hero text button {
-        text-align: left;
-        margin: 2rem auto;
-        max-width: 1000px;
-      } */
       .hero h2 {
         font-family: "Roboto", sans-serif;
-        font-style: normal;
         font-weight: 700;
         font-size: 37px;
-        line-height: 43px;
         margin-bottom: 1rem;
         color: #ffffff;
-
         margin: 2rem auto;
         max-width: 1000px;
       }
       .hero p {
         font-family: "Recursive", sans-serif;
-        font-style: normal;
         font-weight: 400;
         font-size: 15px;
-        line-height: 20px;
         margin-bottom: 2rem;
         color: #ffffff;
-
         margin: 2rem auto;
         max-width: 1000px;
       }
       .hero button {
         font-family: "Recursive", sans-serif;
-        font-style: normal;
         font-weight: 400;
         font-size: 15px;
-        line-height: 18px;
         background-color: #ff6c75;
         color: white;
         border: none;
         padding: 0.5rem 1rem;
         cursor: pointer;
         border-radius: 4px;
-
         margin: 2rem auto;
         max-width: 1000px;
       }
@@ -111,43 +91,35 @@
         height: 100px;
         margin-bottom: 1rem;
         border-radius: 50%;
-        background-color: #23201f; /* Placeholder for image background */
+        background-color: #23201f;
       }
       .feature h3 {
         font-family: "Roboto", sans-serif;
-        font-style: normal;
         font-weight: 700;
         font-size: 24.5px;
-        line-height: 29px;
         margin-bottom: 1rem;
         color: #000000;
       }
       .feature p {
         font-family: "Recursive", sans-serif;
-        font-style: normal;
         font-weight: 400;
         font-size: 15px;
         color: #666;
         text-align: center;
-        line-height: 20px;
       }
       .api-doc {
-        /* text-align: center;
-        padding: 2rem; */
         text-align: left;
         margin: 2rem auto;
         max-width: 1000px;
       }
       .api-doc h2 {
         font-family: "Roboto", sans-serif;
-        font-style: normal;
         font-weight: 700;
         font-size: 25px;
         margin-bottom: 1rem;
       }
       .api-doc p {
         font-family: "Recursive", sans-serif;
-        font-style: normal;
         font-weight: 400;
         font-size: 15px;
         color: #666;
@@ -160,14 +132,12 @@
       }
       .api-section h3 {
         font-family: "Roboto", sans-serif;
-        font-style: normal;
         font-weight: 700;
         font-size: 20px;
         margin-top: 2rem;
       }
       .api-section p {
         font-family: "Recursive", sans-serif;
-        font-style: normal;
         font-weight: 400;
         font-size: 15px;
         color: #666;
@@ -175,20 +145,41 @@
       .api-section .api-code {
         background-color: #333;
         color: white;
-        padding: 1rem;
+        padding: 0;
         border-radius: 5px;
         margin: 1rem 0;
         font-family: monospace;
         overflow-x: auto;
       }
+      .code-container {
+        display: flex;
+        align-items: center;
+        position: relative;
+      }
+      .code-container code {
+        flex: 1;
+        padding: 1rem;
+      }
+      .copy-btn {
+        background-color: #ff6c75;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        border-radius: 4px;
+        margin: 0.5rem;
+      }
+      .copy-btn:hover {
+        background-color: #ff4b5c;
+      }
       .api-section .api-code span {
-        color: #27ae60; /* Green color for POST */
+        color: #27ae60;
       }
     </style>
   </head>
   <body>
     <header>
-      <h1><> VersionVault</h1>
+      <h1>VersionVault</h1>
       <nav>
         <a href="#">Features</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="swagger.html">API Documentation</a
@@ -239,29 +230,43 @@
         protection.
       </p>
       <div class="api-code">
-        <code
-          ><span>curl -X POST</span>
-          "https://yourapi.com/api/create?app_name=example&secure=true"</code
-        >
+        <div class="code-container">
+          <code id="code1"
+            ><span>curl -X POST</span>
+            "https://yourapi.com/api/create?app_name=example&secure=true"</code
+          >
+          <button class="copy-btn" data-clipboard-target="#code1">Copy</button>
+        </div>
       </div>
       <h3>Retrieving the Current Version</h3>
       <p>Quickly fetch the current version of your application.</p>
       <div class="api-code">
-        <code><span>curl</span> https://yourapi.com/example/version</code>
+        <div class="code-container">
+          <code id="code2"
+            ><span>curl</span> https://yourapi.com/example/version</code
+          >
+          <button class="copy-btn" data-clipboard-target="#code2">Copy</button>
+        </div>
       </div>
       <h3>Version Management</h3>
       <p>Update or set the application's version using simple commands.</p>
       <div class="api-code">
-        <code
-          ><span>curl -X POST</span>
-          "https://yourapi.com/example/bump?type=minor"</code
-        >
+        <div class="code-container">
+          <code id="code3"
+            ><span>curl -X POST</span>
+            "https://yourapi.com/example/bump?type=minor"</code
+          >
+          <button class="copy-btn" data-clipboard-target="#code3">Copy</button>
+        </div>
       </div>
       <div class="api-code">
-        <code
-          ><span>curl -X POST</span>
-          "https://yourapi.com/example/set?new_version=2.0.0"</code
-        >
+        <div class="code-container">
+          <code id="code4"
+            ><span>curl -X POST</span>
+            "https://yourapi.com/example/set?new_version=2.0.0"</code
+          >
+          <button class="copy-btn" data-clipboard-target="#code4">Copy</button>
+        </div>
       </div>
       <p>
         Our API provides a straightforward approach to managing your application
@@ -269,5 +274,24 @@
         minimal effort.
       </p>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var clipboard = new ClipboardJS(".copy-btn");
+
+        clipboard.on("success", function (e) {
+          var originalText = e.trigger.textContent;
+          e.trigger.textContent = "Copied!";
+          setTimeout(function () {
+            e.trigger.textContent = originalText;
+          }, 1000);
+          e.clearSelection();
+        });
+
+        clipboard.on("error", function (e) {
+          console.error("Failed to copy code.");
+        });
+      });
+    </script>
   </body>
 </html>
