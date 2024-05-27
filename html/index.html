@@ -12,14 +12,14 @@
     <style>
       body {
         margin: 0;
-        font-family: Arial, sans-serif;
+        font-family: "Recursive", sans-serif;
         background-color: #fff;
         color: #333;
       }
       header {
         background-color: #222;
         color: white;
-        padding: 1rem;
+        padding: 1rem 6rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -36,13 +36,18 @@
       .hero {
         background: linear-gradient(135deg, #333 0%, #111 100%);
         color: white;
-        text-align: center;
+        /* text-align: center; */
         padding: 5rem 1rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        /* display: flex; */
+        /* flex-direction: column; */
+        /* align-items: center;
+        justify-content: center; */
       }
+      /* .hero text button {
+        text-align: left;
+        margin: 2rem auto;
+        max-width: 1000px;
+      } */
       .hero h2 {
         font-family: "Roboto", sans-serif;
         font-style: normal;
@@ -51,6 +56,9 @@
         line-height: 43px;
         margin-bottom: 1rem;
         color: #ffffff;
+
+        margin: 2rem auto;
+        max-width: 1000px;
       }
       .hero p {
         font-family: "Recursive", sans-serif;
@@ -60,6 +68,9 @@
         line-height: 20px;
         margin-bottom: 2rem;
         color: #ffffff;
+
+        margin: 2rem auto;
+        max-width: 1000px;
       }
       .hero button {
         font-family: "Recursive", sans-serif;
@@ -73,12 +84,18 @@
         padding: 0.5rem 1rem;
         cursor: pointer;
         border-radius: 4px;
+
+        margin: 2rem auto;
+        max-width: 1000px;
       }
       .features {
         display: flex;
         justify-content: center;
         gap: 2rem;
         padding: 2rem;
+        text-align: left;
+        margin: 2rem auto;
+        max-width: 1000px;
       }
       .feature {
         background-color: #ffffff;
@@ -115,8 +132,11 @@
         line-height: 20px;
       }
       .api-doc {
-        text-align: center;
-        padding: 2rem;
+        /* text-align: center;
+        padding: 2rem; */
+        text-align: left;
+        margin: 2rem auto;
+        max-width: 1000px;
       }
       .api-doc h2 {
         font-family: "Roboto", sans-serif;
@@ -136,7 +156,7 @@
       .api-section {
         text-align: left;
         margin: 2rem auto;
-        max-width: 800px;
+        max-width: 1000px;
       }
       .api-section h3 {
         font-family: "Roboto", sans-serif;
@@ -168,19 +188,22 @@
   </head>
   <body>
     <header>
-      <h1>VersionVault</h1>
+      <h1><> VersionVault</h1>
       <nav>
-        <a href="#">Features</a>
-        <a href="swagger.html">API Documentation</a>
+        <a href="#">Features</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="swagger.html">API Documentation</a
+        >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="#">Contact</a>
       </nav>
     </header>
     <div class="hero">
       <h2>Version Management Simplified.</h2>
       <p>
-        Automate and secure your application versioning with our robust API.
+        Automate and secure your application <br />
+        with our robust API.
+        <br />
+        <button>Get started</button>
       </p>
-      <button>Get started</button>
     </div>
     <div class="features">
       <div class="feature">
